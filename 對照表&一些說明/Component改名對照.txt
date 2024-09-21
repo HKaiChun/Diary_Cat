@@ -1,0 +1,46 @@
+以下為對照表：
+
+Component34 ： Vaccine_details
+Component ： User_and_pets
+Component1 ： Weight_homepage
+Component2 ： Add_expense
+Component3 ： Edit_diary
+Component4 ： Forgot_password_verification
+Component5 ： Search_products
+Component6 ： Select_edit_delete_expense
+Component7 ： Water_intake_page
+Component8 ： Initial_screen
+Component9 ： Pets_only
+Component10 ： Diary_record_changes
+IPhone1314 ： Mainpage
+Component11 ： Settings
+Component12 ： Forgot_password
+Component13 ： Profile_settings
+Component14 ： Enter_old_password
+Component15 ： Edit_profile_settings
+Component16 ： Delete_expense_page
+Component17 ： New_password
+Component19 ： Diary_record
+Component20 ： Search_product_results
+Component21 ： Delete_diary
+Component22 ： Tips
+Component23 ： Edit_expense_page
+Component24 ： Diary_homepage
+Component25 ： Login
+Component26 ： Open_product_results
+Component27 ： Expense_overview
+Component28 ： Sign_up
+Component29 ： Sign_up_confirmation
+Component30 ： Add_vaccine_record
+Component31 ： Edit_vaccine
+Component32 ： Delete_vaccine
+Component33 ： Vaccine_homepage
+Component35 ： Health_summary
+Component18 ： Expense_page
+
+以下為說明：
+
+1. 資料夾裡面有一個對照表，怕有些漏掉
+2. IPhone1314 from "./screens/mainpage"; 我暫時沒有改，因為mainpage.js 檔裡面有出現 "IPhone13144..."這東西
+，不確定是生成錯誤還怎樣
+3. 我自己的 android 手機無法開啟 mainpage 這個介面，不確定 ios 是否有辦法
