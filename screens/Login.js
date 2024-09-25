@@ -89,11 +89,17 @@ const Login = () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       if (user) {
-        navigation.replace('Mainpage', { userEmail: user.user.email }); // pass the email
+        navigation.replace('Mainpage'); // pass the email
       }
     } catch (error) {
       console.log(error);
-      alert('Sign in failed: ' + error.message);
+      if (error.code === 'auth/user-not-found') {
+        alert('帳號不存在');
+      } else if (error.code === 'auth/invalid-email') {
+        alert('帳號格式錯誤');
+      } else {
+        alert('Sign in failed: ' + error.message);
+      }
     }
     setLoading(false);
   };
@@ -119,7 +125,7 @@ const Login = () => {
       />
       <View style={styles.formContainer}>
         <Text style={styles.title}>登入</Text>
-        
+
         <Text style={styles.label}>Email：</Text>
         <TextInput
           style={styles.input}
@@ -139,20 +145,22 @@ const Login = () => {
           value={password}
           onChangeText={setPassword}
         />
-        
+
         {/* <View style={styles.rememberMeContainer}>
           <Pressable style={styles.checkbox}>
           </Pressable>
           <Text style={styles.rememberMeText}>記住密碼</Text>
         </View> */}
-        
-        <Pressable 
-          style={styles.button}
+
+        <Pressable
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#4e4cc2' : '#5E5BFF' },
+            styles.button]}
           onPress={signIn/*() => navigation.navigate("Mainpage")*/}
         >
           <Text style={styles.buttonText}>登入</Text>
         </Pressable>
-        
+
         <Pressable onPress={() => navigation.navigate("Forgot_password")}>
           <Text style={[styles.linkText, styles.underLine]}>忘記密碼？</Text>
         </Pressable>
@@ -359,7 +367,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     // backgroundColor: '#5E5BFF',
-    backgroundColor: '#5E5BFF',
     borderRadius: Border.br_61xl,
     justifyContent: 'center',
     alignItems: 'center',

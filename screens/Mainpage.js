@@ -4,11 +4,24 @@ import { StyleSheet, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import { useAuth } from "../screens/AuthContext";
 
 const Mainpage = () => {
   const navigation = useNavigation();
   const route = useRoute(); // Import useRoute to access route params
   const { userEmail } = route.params || {}; // Destructure userEmail from route params
+  const {user, loading} = useAuth();
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+  if (!user) {
+    return (
+      <View>
+        <Text>You need to log in.</Text>
+      </View>
+    );
+  }
   
   {/* 測試是否可以將資料抓出來 */}
   // console.log(route.params); // Add this line to check what params are being passed
@@ -22,6 +35,7 @@ const Mainpage = () => {
 
       {/* 測試是否可以將資料抓出來 */}
       {/* <Text style={styles.userEmailText}>{userEmail ? `Welcome, ${userEmail}` : 'Welcome!'}</Text> */}
+      <Text>Welcome, {user.email}!</Text>
 
       <Pressable
         style={styles.alignJustify}

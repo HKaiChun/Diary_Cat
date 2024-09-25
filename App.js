@@ -1,7 +1,14 @@
 const Stack = createNativeStackNavigator();
 import * as React from "react";
+import { AuthProvider } from './screens/AuthContext';
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";
+import auth from '@react-native-firebase/auth'; // Firebase Authentication
+
 import Mainpage from "./screens/Mainpage";
 import Vaccine_details from "./screens/Vaccine_details";
 import User_and_pets from "./screens/User_and_pets";
@@ -41,9 +48,6 @@ import Vaccine_homepage from "./screens/Vaccine_homepage";
 import Health_summary from "./screens/Health_summary";
 import Expense_page from "./screens/Expense_page";
 
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -81,6 +85,8 @@ const App = () => {
   }
 
   return (
+    <AuthProvider>
+
     <NavigationContainer>
       {hideSplashScreen ? (
         <Stack.Navigator initialRouteName="Initial_screen" screenOptions={{ headerShown: false }}>
@@ -274,6 +280,7 @@ const App = () => {
 
       ) : null}
     </NavigationContainer>
+    </AuthProvider>
   );
 };
 export default App;

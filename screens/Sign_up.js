@@ -15,29 +15,43 @@ const Sign_up = () => {
   const [password, setPassword] = useState("");
 
   const handleSignUp = async () => {
-    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then((userCredential) => {
-        // User registered successfully
-        const user = userCredential.user;
-        console.log("User registered:", user.email);
+    // Check if email or password is empty
+    if (email.trim() === "" || password.trim() === "") {
+      Alert.alert("Error", "帳號密碼不能為空");
+      return; // Stop further execution if either field is empty
+    }
 
-        // Show success message and navigate to Login
-        Alert.alert(
-          "Registration Successful",
-          `Welcome, ${user.email}! Your account has been created.`,
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.navigate("Login"),
-            },
-          ]
-        );
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.error("Error during sign up:", errorMessage);
-        Alert.alert("Sign Up Error", errorMessage); // Display the error message
-      });
+    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
+    .then((userCredential) => {
+      // User registered successfully
+      const user = userCredential.user;
+      console.log("User registered:", user.email);
+
+      // Show success message and navigate to Login
+      Alert.alert(
+        "註冊成功",
+        `歡迎, ${user.email}! 您的帳號已創建.`,
+        [
+          {
+            text: "確定",
+            onPress: () => navigation.navigate("Login"),
+          },
+        ]
+      );
+    })
+    .catch((error) => {
+      let errorMessage = error.message;
+
+      // Handle specific error codes
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "帳號已經存在";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "密碼至少輸入六位數";
+      }
+
+      console.error("Error during sign up:", errorMessage);
+      Alert.alert("註冊錯誤", errorMessage); // Display the error message
+    });
   };
 
   return (
