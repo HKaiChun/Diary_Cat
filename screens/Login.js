@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Image } from "expo-image";
 import { useState } from 'react';
-import { StyleSheet, Text, Pressable, View, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, Text, Pressable, View, TextInput, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH } from '../FirebaseConfig'
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
@@ -85,6 +85,13 @@ const Login = () => {
       return;
     }
 
+    // Enhanced email format validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      alert('帳號格式錯誤');
+      return;
+    }
+
     setLoading(true);
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
@@ -152,14 +159,18 @@ const Login = () => {
           <Text style={styles.rememberMeText}>記住密碼</Text>
         </View> */}
 
-        <Pressable
-          style={({ pressed }) => [
-            { backgroundColor: pressed ? '#4e4cc2' : '#5E5BFF' },
-            styles.button]}
-          onPress={signIn/*() => navigation.navigate("Mainpage")*/}
-        >
-          <Text style={styles.buttonText}>登入</Text>
-        </Pressable>
+{loading ? ( // Show loading indicator while loading
+          <ActivityIndicator size="large" color="#ffffff" style={styles.loader} />
+        ) : (
+          <Pressable
+            style={({ pressed }) => [
+              { backgroundColor: pressed ? '#4e4cc2' : '#5E5BFF' },
+              styles.button]}
+            onPress={signIn}
+          >
+            <Text style={styles.buttonText}>登入</Text>
+          </Pressable>
+        )}
 
         <Pressable onPress={() => navigation.navigate("Forgot_password")}>
           <Text style={[styles.linkText, styles.underLine]}>忘記密碼？</Text>
