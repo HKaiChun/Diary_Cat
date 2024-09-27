@@ -36,7 +36,9 @@ const Sign_up = () => {
 
         // Save the user UID as a key without any value
         const userRef = ref(db, `uid/${user.uid}/`); // Specify the path to store just the UID
-        await set(userRef, { email: `${user.email}` });
+        await set(userRef, {
+          description: '其他的內容'
+        });
 
 
         // Show success message and navigate to Login
