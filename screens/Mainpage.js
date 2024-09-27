@@ -22,9 +22,6 @@ const Mainpage = () => {
       </View>
     );
   }
-  
-  {/* 測試是否可以將資料抓出來 */}
-  // console.log(route.params); // Add this line to check what params are being passed
 
   return (
     <LinearGradient
@@ -34,7 +31,6 @@ const Mainpage = () => {
     >
 
       {/* 測試是否可以將資料抓出來 */}
-      {/* <Text style={styles.userEmailText}>{userEmail ? `Welcome, ${userEmail}` : 'Welcome!'}</Text> */}
       <Text>Welcome, {user.email}!</Text>
 
       <Pressable
