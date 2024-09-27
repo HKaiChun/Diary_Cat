@@ -35,9 +35,15 @@ const Sign_up = () => {
         console.log("User registered:", user.email);
 
         // Save the user UID as a key without any value
-        const userRef = ref(db, `uid/${user.uid}/`); // Specify the path to store just the UID
+        const userRef = ref(db, `uid/${user.uid}/profile/`); // Specify the path to store just the UID
         await set(userRef, {
-          description: '其他的內容'
+          catName: "",
+          gender: "",
+          breed: "",
+          color: "",
+          age: "",
+          birthday: "",
+          ligation: ""
         });
 
 
