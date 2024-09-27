@@ -7,12 +7,19 @@ import { FIREBASE_AUTH } from "../FirebaseConfig"; // Import Firebase auth insta
 import { sendSignInLinkToEmail } from "firebase/auth"; // Import for sending email verification
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
+import { db } from "../FirebaseConfig"; // for realtime database
+import { ref, set } from 'firebase/database'; // Import Firebase Realtime Database methods
+
 import { Border, FontFamily, FontSize, Color } from "../GlobalStyles";
 
 const Sign_up = () => {
   const navigation = useNavigation();
+  // Authentication
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Realtime Database
+  const [userUid, setuserUid] = useState("");
 
   const handleSignUp = async () => {
     // Check if email or password is empty
@@ -22,36 +29,41 @@ const Sign_up = () => {
     }
 
     createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-    .then((userCredential) => {
-      // User registered successfully
-      const user = userCredential.user;
-      console.log("User registered:", user.email);
+      .then(async (userCredential) => {
+        // User registered successfully
+        const user = userCredential.user;
+        console.log("User registered:", user.email);
 
-      // Show success message and navigate to Login
-      Alert.alert(
-        "註冊成功",
-        `歡迎, ${user.email}! 您的帳號已創建.`,
-        [
-          {
-            text: "確定",
-            onPress: () => navigation.navigate("Login"),
-          },
-        ]
-      );
-    })
-    .catch((error) => {
-      let errorMessage = error.message;
+        // Save the user UID as a key without any value
+        const userRef = ref(db, `uid/${user.uid}/`); // Specify the path to store just the UID
+        await set(userRef, { email: `${user.email}` });
 
-      // Handle specific error codes
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "帳號已經存在";
-      } else if (error.code === "auth/weak-password") {
-        errorMessage = "密碼至少輸入六位數";
-      }
 
-      console.error("Error during sign up:", errorMessage);
-      Alert.alert("註冊錯誤", errorMessage); // Display the error message
-    });
+        // Show success message and navigate to Login
+        Alert.alert(
+          "註冊成功",
+          `歡迎, ${user.email}! 您的帳號已創建.`,
+          [
+            {
+              text: "確定",
+              onPress: () => navigation.navigate("Login"),
+            },
+          ]
+        );
+      })
+      .catch((error) => {
+        let errorMessage = error.message;
+
+        // Handle specific error codes
+        if (error.code === "auth/email-already-in-use") {
+          errorMessage = "帳號已經存在";
+        } else if (error.code === "auth/weak-password") {
+          errorMessage = "密碼至少輸入六位數";
+        }
+
+        console.error("Error during sign up:", errorMessage);
+        Alert.alert("註冊錯誤", errorMessage); // Display the error message
+      });
   };
 
   return (

@@ -47,7 +47,8 @@ const Mainpage = () => {
           source={require("../assets/align-justify.png")}
         />
       </Pressable>
-      <Text style={styles.text}>Diary_Cat</Text>
+      {/* <Text style={styles.text}>Diary_Cat</Text> */}
+      <Text >{user.uid}</Text>
       <View style={[styles.iphone13144Child, styles.iphone13144ChildLayout1]} />
       <Text style={[styles.text1, styles.textTypo2]}>飲水</Text>
       <View style={[styles.iphone13144Item, styles.iphone13144ChildLayout1]} />

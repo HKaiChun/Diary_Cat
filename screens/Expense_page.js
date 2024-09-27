@@ -1,231 +1,223 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation,useIsFocused } from "@react-navigation/native";
+import { Color, FontFamily, FontSize } from "../GlobalStyles";
+import { db } from "../FirebaseConfig";
+import { ref, onValue, off } from "firebase/database";
+import moment from "moment";
 
 const Expense_page = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const [expenses, setExpenses] = useState([]);
+  const currentDate = new Date();
+  const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}`; // YYYY-MM format for the current month
 
+  // Function to get the total number of days in the current month
+  const getDaysInMonth = (year, month) => {
+    return new Date(year, month, 0).getDate();
+  };
+
+  useEffect(() => {
+    const daysInMonth = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth() + 1); // Get the number of days in the current month
+    const unsubscribe =navigation.addListener('focus',()=> {
+             updateExpenses();
+    });
+    const refs = []; // Store all references to easily uninstall
+
+    // Iterate over each day and listen for data changes on that day
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayStr = `${currentMonth}-${String(day).padStart(2, "0")}`; // YYYY-MM-DD format
+      const dbRef = ref(db, `expense/${dayStr}/item`);
+      refs.push(dbRef); // Save references to remove listeners later
+
+      // Use .onValue to listen for data changes on each day
+      onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const dailyExpenses = Object.keys(data).map((key) => ({
+            name: key,
+            price: data[key].price,
+            date: dayStr, // Date information
+          }));
+
+          // Update the expense list: filter out the data for the current day first, and then insert the latest data
+          setExpenses((prevExpenses) => {
+            const filteredExpenses = prevExpenses.filter((expense) => expense.date !== dayStr);
+            const updatedExpenses = [...filteredExpenses, ...dailyExpenses];
+
+            // Sort in reverse chronological order
+            return updatedExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+          });
+        }
+      });
+    }
+
+    // Remove all listeners when the component is unmounted
+    return () => {
+      unsubscribe;
+      refs.forEach((dbRef) => {
+        // Use off() to remove listeners
+        off(dbRef);
+      });
+    };
+  }, [isFocused,navigation]); // Empty dependency array ensures this effect runs only once
+  
+  // Function to navigate to Edit_expense_page.js when an expense item is pressed
+  const handlePress = (expense) => {
+    navigation.navigate("Edit_expense_page", {
+      date: expense.date,
+      name: expense.name,
+      price: expense.price,
+    });
+  };
+  const updateExpenses = () => {
+    // Refresh expenses by triggering useEffect again
+    const daysInMonth = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth() + 1);
+    const updatedExpenses = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayStr = `${currentMonth}-${String(day).padStart(2, "0")}`;
+      const dbRef = ref(db, `expense/${dayStr}/item`);
+
+      onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const dailyExpenses = Object.keys(data).map((key) => ({
+            name: key,
+            price: data[key].price,
+            date: dayStr,
+          }));
+
+          updatedExpenses.push(...dailyExpenses);
+        }
+      });
+    }
+
+    // Set the updated expenses
+    setExpenses(updatedExpenses);
+  };
   return (
-    <View style={styles.view}>
-      <Image
-        style={[styles.icon, styles.iconPosition]}
-        contentFit="cover"
-        source={require("../assets/5.png")}
-      />
-      <Image
-        style={styles.icon1}
-        contentFit="cover"
-        source={require("../assets/6.png")}
-      />
-      <Pressable
-        style={styles.pressable}
-        onPress={() => navigation.navigate("Mainpage")}
+    <View style={styles.container}>
+      <View style={styles.headerRow}>
+        {/* Back button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Mainpage")}
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/1.png")}
+          />
+        </TouchableOpacity>
+
+        {/* Diary_Cat text */}
+        <Text style={styles.footerText}>Diary_Cat</Text>
+      </View>
+
+      <View style={styles.buttonRow}>
+        <Text style={[styles.month_expense]}>本月支出</Text>
+        <Text style={[styles.all_expense]}>累計支出</Text>
+      </View>
+
+      {/* Add expense button */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Add_expense")}
+        style={styles.addButton}
       >
-        <Image
-          style={styles.icon2}
-          contentFit="cover"
-          source={require("../assets/0.png")}
-        />
-      </Pressable>
-      <Image
-        style={styles.icon3}
-        contentFit="cover"
-        source={require("../assets/1.png")}
-      />
-      <Image
-        style={[styles.child, styles.textPosition]}
-        contentFit="cover"
-        source={require("../assets/rectangle-17.png")}
-      />
-      <Image
-        style={[styles.item, styles.itemLayout]}
-        contentFit="cover"
-        source={require("../assets/ellipse-2.png")}
-      />
-      <Image
-        style={[styles.inner, styles.itemLayout]}
-        contentFit="cover"
-        source={require("../assets/ellipse-2.png")}
-      />
-      <Text style={[styles.text, styles.textTypo1]}>本月支出</Text>
-      <Text style={[styles.text1, styles.textTypo1]}>累計支出</Text>
-      <Pressable
-        style={styles.rectanglePressable}
-        onPress={() => navigation.navigate("Expense_overview")}
-      />
-      <View style={[styles.rectangleView, styles.text2Position]} />
-      <Text style={[styles.text2, styles.text2Position]}>{`記帳分類
-(我還沒想好)`}</Text>
-      <View style={[styles.child1, styles.childPosition]} />
-      <View style={[styles.child2, styles.childPosition]} />
-      <Text style={[styles.text3, styles.textTypo]}>最近幾筆紀錄</Text>
-      <Text style={[styles.text4, styles.textTypo]}>記帳</Text>
-      <Text style={[styles.text5, styles.iconPosition]}>Diary_Cat</Text>
+        <Text style={styles.addText}>記帳</Text>
+      </TouchableOpacity>
+
+      {/* Scrollable list starting from the middle of the screen */}
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.expenseContainer}>
+          {expenses.map((expense, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.expenseButton}
+              onPress={() => handlePress(expense)}
+            >
+              <Text style={styles.expenseText}>
+                {`${expense.date}-${expense.name}-${expense.price}`}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  iconPosition: {
-    left: "50%",
-    position: "absolute",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
-  textPosition: {
-    left: 73,
-    position: "absolute",
-  },
-  itemLayout: {
-    height: 137,
-    width: 152,
-    position: "absolute",
-  },
-  textTypo1: {
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_xl,
-    textAlign: "left",
-  },
-  text2Position: {
-    display: "none",
-    position: "absolute",
-  },
-  childPosition: {
-    backgroundColor: Color.colorGainsboro_200,
-    left: 73,
-    position: "absolute",
-  },
-  textTypo: {
-    fontSize: FontSize.size_13xl,
-    textAlign: "left",
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interBold,
-    fontWeight: "700",
-    position: "absolute",
+  backButton: {
+    width: 48,
+    height: 48,
+    marginRight: 10,
   },
   icon: {
-    marginLeft: -64.5,
-    top: 122,
-    width: 141,
-    height: 142,
-  },
-  icon1: {
-    top: 133,
-    left: 142,
-    width: 122,
-    height: 121,
-    position: "absolute",
-  },
-  icon2: {
     width: "100%",
     height: "100%",
   },
-  pressable: {
-    left: 24,
-    top: 39,
-    width: 78,
-    height: 71,
-    position: "absolute",
-  },
-  icon3: {
-    top: 50,
-    left: 39,
-    width: 48,
-    height: 48,
-    position: "absolute",
-    overflow: "hidden",
-  },
-  child: {
-    top: 543,
-    height: 75,
-    width: 277,
-  },
-  item: {
-    top: 264,
-    left: 37,
-  },
-  inner: {
-    top: 267,
-    left: 215,
-  },
-  text: {
-    top: 320,
-    textAlign: "left",
-    left: 73,
-    position: "absolute",
-  },
-  text1: {
-    top: 319,
-    left: 247,
-    width: 103,
-    height: 25,
-    textAlign: "left",
-    position: "absolute",
-  },
-  rectanglePressable: {
-    top: 419,
-    left: 87,
-    borderRadius: Border.br_30xl,
-    backgroundColor: Color.colorMistyrose_100,
-    width: 231,
-    height: 85,
-    position: "absolute",
-  },
-  rectangleView: {
-    top: 844,
-    left: 55,
-    backgroundColor: "#ffedd3",
-    width: 295,
-    height: 570,
-  },
-  text2: {
-    top: 1017,
-    left: 155,
-    width: 195,
-    height: 172,
-    textAlign: "left",
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_xl,
-  },
-  child1: {
-    top: 636,
-    height: 68,
-    width: 277,
-  },
-  child2: {
-    top: 727,
-    width: 276,
-    height: 79,
-  },
-  text3: {
-    top: 559,
-    left: 113,
-  },
-  text4: {
-    top: 442,
-    left: 167,
-    width: 151,
-    height: 103,
-  },
-  text5: {
-    marginTop: -409.5,
-    marginLeft: -65.5,
-    top: "50%",
+  footerText: {
+    color: Color.colorGray_500, // Gray color
+    left: "50%",
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,
     color: Color.colorGray_500,
-    width: 242,
-    textAlign: "left",
   },
-  view: {
-    backgroundColor: Color.colorLightgoldenrodyellow,
-    width: 393,
-    height: 883,
-    overflow: "hidden",
+  buttonRow: {
+    position: "absolute",
+    top: "15%", // Distance from the bottom of the screen
+    left: "10%",
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between", // Position buttons on the left and right sides
+    paddingHorizontal: 60, // Adjust left-right margins
+  },
+  addButton: {
+    alignSelf: "center",
+    backgroundColor: "#FFD700", // Gold background
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 20,
+    top: "10%",
+  },
+  addText: {
+    fontSize: 18,
+    fontFamily: FontFamily.interRegular,
+    color: "#000",
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: "50%", // Start displaying from the middle of the screen
+  },
+  expenseButton: {
+    backgroundColor: "#DCDCDC", // Gray background
+    borderRadius: 8,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  expenseText: {
+    fontSize: 18,
+    fontFamily: FontFamily.interRegular,
+    color: "#000000", // Black font
+  },
+  container: {
+    flex: 1,
+    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
 });
 
