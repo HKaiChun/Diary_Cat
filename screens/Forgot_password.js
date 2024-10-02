@@ -3,9 +3,49 @@ import { Image } from "expo-image";
 import { StyleSheet, View, Text, Pressable, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import { useState } from "react"; // Import useState
+import { sendPasswordResetEmail, fetchSignInMethodsForEmail  } from "firebase/auth";
+import { FIREBASE_AUTH } from '../FirebaseConfig';
 
 const Forgot_password = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState(''); // Declare email state
+  const auth = FIREBASE_AUTH;
+
+  const validateEmail = (email) => {
+    // Simple regex for email format validation
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    return emailRegex.test(email);
+  };
+
+  const resetPassword = async() => {
+    if (email === '') {
+      alert("請輸入 email！");
+    } else if (!validateEmail(email)) {
+      alert("請輸入有效的 email 格式！");
+    } else {
+      // Check if the email exists
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      if (signInMethods.length === 0) {
+        alert("該 email 不存在！");
+        return;
+      }
+
+      await sendPasswordResetEmail(auth, email)
+        .then(() => {
+          // Alert after email is sent
+          alert(
+            "已發送郵件，請檢查您的郵箱並按照說明重設密碼。",
+            [
+              { text: "確定", onPress: () => navigation.navigate("Login") }
+            ]
+          );
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  }
 
   return (
     // <Pressable
@@ -63,18 +103,20 @@ const Forgot_password = () => {
       <Text style={styles.title}>忘記密碼</Text>
 
       {/* Email Input */}
-      <Text style={styles.label}>請輸入註冊Email:</Text>
+      <Text style={styles.label}>請輸入Email:</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your registered email"
         keyboardType="email-address"
         autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail} // Update email state on input change
       />
 
       {/* Confirm Button */}
-      <Pressable 
+      <Pressable
         style={styles.button}
-        onPress={() => navigation.navigate("Forgot_password_verification")}
+        onPress={() => resetPassword()}
       >
         <Text style={styles.buttonText}>確定</Text>
       </Pressable>
