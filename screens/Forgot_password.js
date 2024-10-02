@@ -14,7 +14,7 @@ const Forgot_password = () => {
 
   const validateEmail = (email) => {
     // Simple regex for email format validation
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return emailRegex.test(email);
   };
 
