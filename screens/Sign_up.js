@@ -1,11 +1,11 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View, Pressable, TextInput, Alert } from "react-native";
+import { StyleSheet, Text, View, Pressable, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH } from "../FirebaseConfig"; // Import Firebase auth instance
-import { sendSignInLinkToEmail } from "firebase/auth"; // Import for sending email verification
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth"; // Import for sending email verification
+// import auth from '@react-native-firebase/auth'; // Firebase Authentication
 
 import { db } from "../FirebaseConfig"; // for realtime database
 import { ref, set } from 'firebase/database'; // Import Firebase Realtime Database methods
@@ -14,64 +14,112 @@ import { Border, FontFamily, FontSize, Color } from "../GlobalStyles";
 
 const Sign_up = () => {
   const navigation = useNavigation();
+
+  const [loading, setLoading] = useState(false);
   // Authentication
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
 
   // Realtime Database
   const [userUid, setuserUid] = useState("");
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (email, password) => {
+
     // Check if email or password is empty
     if (email.trim() === "" || password.trim() === "") {
       Alert.alert("Error", "帳號密碼不能為空");
       return; // Stop further execution if either field is empty
     }
 
-    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
-      .then(async (userCredential) => {
-        // User registered successfully
-        const user = userCredential.user;
-        console.log("User registered:", user.email);
-
-        // Save the user UID as a key without any value
-        const userRef = ref(db, `uid/${user.uid}/profile/`); // Specify the path to store just the UID
-        await set(userRef, {
-          catName: "",
-          gender: "",
-          breed: "",
-          color: "",
-          age: "",
-          birthday: "",
-          ligation: ""
-        });
-
-
-        // Show success message and navigate to Login
-        Alert.alert(
-          "註冊成功",
-          `歡迎, ${user.email}! 您的帳號已創建.`,
-          [
-            {
-              text: "確定",
-              onPress: () => navigation.navigate("Login"),
-            },
-          ]
-        );
-      })
-      .catch((error) => {
-        let errorMessage = error.message;
-
-        // Handle specific error codes
-        if (error.code === "auth/email-already-in-use") {
-          errorMessage = "帳號已經存在";
-        } else if (error.code === "auth/weak-password") {
-          errorMessage = "密碼至少輸入六位數";
-        }
-
-        console.error("Error during sign up:", errorMessage);
-        Alert.alert("註冊錯誤", errorMessage); // Display the error message
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const user = userCredential.user;
+  
+      // Send email verification
+      await sendEmailVerification(user);
+  
+      Alert.alert("註冊成功，請查看電子郵件進行驗證");
+  
+      // Save user profile in Realtime Database
+      const userRef = ref(db, `uid/${user.uid}/profile/`);
+      await set(userRef, {
+        email,
+        catName: "",
+        gender: "",
+        breed: "",
+        color: "",
+        age: "",
+        birthday: "",
+        ligation: ""
       });
+  
+      navigation.navigate("Login");
+  
+    } catch (error) {
+      let errorMessage = error.message;
+  
+      // Handle specific error codes
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "帳號已經存在";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "密碼至少輸入六位數";
+      }
+  
+      // console.error(errorMessage);
+      Alert.alert("註冊失敗", errorMessage); // Display the error message
+    }
+    setLoading(false);
+
+    // await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password).then(
+    //   async (userCredential) => {
+    //     // User registered successfully
+    //     const user = userCredential.user;
+    //     console.log("User registered:", user.email);
+
+    //     // send vaildation to email
+    //     await sendEmailVerification(user)
+    //     console.log("sucess")
+
+    //     // Save the user UID as a key without any value
+    //     const userRef = ref(db, `uid/${user.uid}/profile/`); // Specify the path to store just the UID
+    //     await set(userRef, {
+    //       catName: "",
+    //       gender: "",
+    //       breed: "",
+    //       color: "",
+    //       age: "",
+    //       birthday: "",
+    //       ligation: ""
+    //     });
+
+
+    //     // Show success message and navigate to Login
+    //     Alert.alert(
+    //       "註冊成功",
+    //       `歡迎, ${user.email}! 您的帳號已創建.`,
+    //       [
+    //         {
+    //           text: "確定",
+    //           onPress: () => navigation.navigate("Login"),
+    //         },
+    //       ]
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     let errorMessage = error.message;
+
+    //     // Handle specific error codes
+    //     if (error.code === "auth/email-already-in-use") {
+    //       errorMessage = "帳號已經存在";
+    //     } else if (error.code === "auth/weak-password") {
+    //       errorMessage = "密碼至少輸入六位數";
+    //     }
+
+    //     console.error("Error during sign up:", errorMessage);
+    //     Alert.alert("註冊錯誤", errorMessage); // Display the error message
+    //   });
   };
 
   return (
@@ -145,8 +193,10 @@ const Sign_up = () => {
           placeholder="Enter your email"
           keyboardType="email-address"
           autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
+          autoCorrect={false}
+          // value={email}
+          // onChangeText={setEmail}
+          onChangeText={(email) => setEmail(email)}
         />
 
         <Text style={styles.label}>密碼：</Text>
@@ -155,16 +205,25 @@ const Sign_up = () => {
           placeholder="Enter your password"
           secureTextEntry={true}
           autoCapitalize="none"
-          value={password}
-          onChangeText={setPassword}
+          autoCorrect={false}
+          // value={password}
+          // onChangeText={setPassword}
+          onChangeText={(password) => setPassword(password)}
         />
 
+        {loading ? (
+          <ActivityIndicator size="large" color="#ffffff" style={styles.loader} />
+        ) : (
         <Pressable
-          style={styles.button}
-          onPress={handleSignUp/*() => navigation.navigate("Sign_up_confirmation")*/}
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#bababa' : '#FFFFFF' },
+            styles.button]}
+          onPress={() => handleSignUp(email, password)/*() => navigation.navigate("Sign_up_confirmation")*/}
         >
           <Text style={styles.buttonText}>確定</Text>
         </Pressable>
+        )}
+
       </View>
     </View>
   );
@@ -335,7 +394,6 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#FFFFFF',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',

@@ -95,35 +95,23 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      if (user) {
-        navigation.replace('Mainpage'); // pass the email
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check if email is verified
+      if (!user || !user.emailVerified) {
+          alert("請驗證您的電子郵件後再嘗試登錄");
+          setLoading(false);
+          return; // Early return if email is not verified
       }
-    } catch (error) {
+      
+      navigation.replace('Mainpage'); // Proceed to main page
+  } catch (error) {
       console.log(error);
-      if (error.code === 'auth/user-not-found') {
-        alert('帳號不存在');
-      } else if (error.code === 'auth/invalid-email') {
-        alert('帳號格式錯誤');
-      } else {
-        alert('Sign in failed: ' + error.message);
-      }
-    }
+      alert("帳號或密碼錯誤")
+  }
     setLoading(false);
   };
-
-  // 這是註冊（新增使用者）函式，這裡還用不到
-  // const signUp = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const user = await createUserWithEmailAndPassword(auth, email, password);
-  //     if (user) router.replace('/Sign_up');
-  //   } catch (error) {
-  //     console.log(error);
-  //     alert('Sign in failed: ' + error.message);
-  //   }
-  //   setLoading(false);
-  // };
 
   return (
     <View style={styles.container}>
