@@ -25,25 +25,22 @@ const Forgot_password = () => {
       alert("請輸入有效的 email 格式！");
     } else {
       // Check if the email exists
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-      if (signInMethods.length === 0) {
-        alert("該 email 不存在！");
-        return;
-      }
+      // const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      // if (signInMethods.length === 0) {
+      //   alert("該 email 不存在！");
+      //   return;
+      // }
 
-      await sendPasswordResetEmail(auth, email)
-        .then(() => {
-          // Alert after email is sent
-          alert(
-            "已發送郵件，請檢查您的郵箱並按照說明重設密碼。",
-            [
-              { text: "確定", onPress: () => navigation.navigate("Login") }
-            ]
-          );
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert("已發送郵件，請檢查您的郵箱並按照說明重設密碼。");
+        
+        // Navigate to the Login screen after showing the alert
+        navigation.navigate("Login");
+  
+      } catch (error) {
+        alert(error.message);
+      }
     }
   }
 

@@ -1,4 +1,3 @@
-const Stack = createNativeStackNavigator();
 import * as React from "react";
 import { AuthProvider } from './screens/AuthContext';
 import { NavigationContainer } from "@react-navigation/native";
@@ -48,6 +47,7 @@ import Vaccine_homepage from "./screens/Vaccine_homepage";
 import Health_summary from "./screens/Health_summary";
 import Expense_page from "./screens/Expense_page";
 
+const Stack = createNativeStackNavigator();
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -69,7 +69,7 @@ const firebaseConfig = {
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
-
+  
   const [fontsLoaded, error] = useFonts({
     "Inter-Regular": require("./assets/fonts/Inter-Regular.ttf"),
     "Inter-Bold": require("./assets/fonts/Inter-Bold.ttf"),
