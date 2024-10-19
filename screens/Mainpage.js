@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import { StyleSheet, Pressable, Text, View,TouchableOpacity, Touchable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
@@ -22,126 +22,104 @@ const Mainpage = () => {
       </View>
     );
   }
-
+  
   return (
     <LinearGradient
-      style={[styles.iphone13144, styles.iconLayout2]}
-      locations={[0.52, 1]}
-      colors={["#fffedf", "#e0e0e0"]}
+    style={[styles.iphone13144, styles.iconLayout2]}
+    locations={[0.52, 1]}
+    colors={["#fffedf", "#e0e0e0"]}
     >
+      {/* 飲水底 */}
+      <View style={[styles.iphone13144Child, styles.iphone13144ChildLayout1]} />
+      {/* 體重底 */}
+      <View style={[styles.iphone13144Item, styles.iphone13144ChildLayout1]} />
+      {/* 支出底 */}
+      <View style={[styles.iphone13144Inner, styles.iphone13144ChildLayout1]} />
+      {/* 疫苗底 */}
+      <View style={[styles.iphone13144Child5, styles.weight2IconPosition]} /> 
+      {/* 小知識底 */}
+      <View style={[styles.iphone13144Child8, styles.iphone13144ChildLayout]} />
+      {/* 爬蟲 */}
+      <View style={[styles.iphone13144Child7, styles.iphone13144ChildLayout]} />
 
       {/* 測試是否可以將資料抓出來 */}
       <Text>Welcome, {user.email}!</Text>
 
-      <Pressable
-        style={styles.alignJustify}
-        onPress={() => navigation.navigate("Profile_settings")}
+      <Text style={styles.text}>Diary_Cat</Text>
+      <Text >{user.uid}</Text>
+      {/*
+      {/* 飲水 */}
+      <TouchableOpacity
+        onPress={() => {navigation.navigate("Water_intake_page");console.log("hihi")}}
       >
         <Image
-          style={[styles.icon, styles.iconLayout2]}
-          contentFit="cover"
-          source={require("../assets/align-justify.png")}
-        />
-      </Pressable>
-      {/* <Text style={styles.text}>Diary_Cat</Text> */}
-      <Text >{user.uid}</Text>
-      <View style={[styles.iphone13144Child, styles.iphone13144ChildLayout1]} />
-      <Text style={[styles.text1, styles.textTypo2]}>飲水</Text>
-      <View style={[styles.iphone13144Item, styles.iphone13144ChildLayout1]} />
-      <Text style={[styles.text2, styles.textTypo2]}>體重</Text>
-      <View style={[styles.iphone13144Inner, styles.iphone13144ChildLayout1]} />
-      <Text style={[styles.text3, styles.textPosition2]}>支出</Text>
-      <View style={[styles.rectangleView, styles.rectangleViewLayout]} />
-      <Text style={[styles.text4, styles.textPosition1]}>日記/照片</Text>
-      <View style={[styles.iphone13144Child1, styles.rectangleViewLayout]} />
-      <Text style={[styles.text5, styles.textPosition]}>貼心小建議</Text>
-      <Image
-        style={[styles.fountain1Icon, styles.iconLayout1]}
-        contentFit="cover"
-        source={require("../assets/fountain-1.png")}
-      />
-      <Image
-        style={[styles.weight1Icon, styles.textPosition1]}
-        contentFit="cover"
-        source={require("../assets/weight-1.png")}
-      />
-      <Pressable
-        style={[styles.iphone13144Child, styles.iphone13144ChildLayout1]}
-        onPress={() => navigation.navigate("Water_intake_page")}
-      />
-      <Text style={[styles.text6, styles.textTypo]}>飲水</Text>
-      <Pressable
-        style={[styles.iphone13144Item, styles.iphone13144ChildLayout1]}
-        onPress={() => navigation.navigate("Weight_homepage")}
-      />
-      <Pressable
-        style={[styles.iphone13144Inner, styles.iphone13144ChildLayout1]}
-        onPress={() => navigation.navigate("Expense_page")}
-      />
-      <Text style={[styles.text7, styles.textTypo]}>支出</Text>
-      <Pressable
-        style={[styles.rectangleView, styles.rectangleViewLayout]}
-        onPress={() => navigation.navigate("Diary_homepage")}
-      />
-      <Text style={[styles.text8, styles.textPosition1]}>日記/照片</Text>
-      <View style={[styles.iphone13144Child5, styles.weight2IconPosition]} />
-      <Text style={[styles.text9, styles.text9Position]}>疫苗接種</Text>
-      <View style={[styles.iphone13144Child1, styles.rectangleViewLayout]} />
-      <View style={[styles.iphone13144Child7, styles.iphone13144ChildLayout]} />
-      <Text style={[styles.text10, styles.textTypo]}>爬蟲</Text>
-      <View style={[styles.iphone13144Child8, styles.iphone13144ChildLayout]} />
-      <Text style={[styles.text11, styles.textTypo]}>小知識</Text>
-      <Text style={[styles.text12, styles.textTypo]}>健康總結</Text>
-      <Image
         style={[styles.fountain2Icon, styles.iconPosition]}
         contentFit="cover"
         source={require("../assets/fountain-2.png")}
-      />
-      <Image
-        style={[styles.weight2Icon, styles.weight2IconPosition]}
-        contentFit="cover"
-        source={require("../assets/weight-2.png")}
-      />
-      <Text style={[styles.text2, styles.textTypo2]}>體重</Text>
-      <Image
-        style={[styles.earnIcon, styles.iconLayout]}
-        contentFit="cover"
-        source={require("../assets/earn.png")}
-      />
-      <Image
-        style={styles.journal1Icon}
-        contentFit="cover"
-        source={require("../assets/journal-1.png")}
-      />
-      <Image
-        style={[styles.journal2Icon, styles.iconLayout]}
-        contentFit="cover"
-        source={require("../assets/journal-2.png")}
-      />
-      <Image
+        />
+        <Text style={[styles.text6, styles.textTypo]}>飲水</Text>
+      </TouchableOpacity>
+      {/* 疫苗 */}
+      <TouchableOpacity
+          onPress={() => navigation.navigate("Vaccine_homepage")}
+      >
+        <Image
         style={styles.syringe1Icon}
         contentFit="cover"
         source={require("../assets/syringe-1.png")}
-      />
-      <Image
-        style={[styles.suggestion1Icon, styles.text9Position]}
+        />
+        <Text style={[styles.text9, styles.text9Position]}>疫苗接種</Text>
+      </TouchableOpacity>
+
+      {/* 支出 */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Expense_page")}
+      >
+        <Image
+        style={[styles.earnIcon, styles.iconLayout]}
         contentFit="cover"
-        source={require("../assets/suggestion-1.png")}
-      />
-      <Image
-        style={styles.animalShelter1Icon}
+        source={require("../assets/earn.png")}
+        />
+        <Text style={[styles.text3, styles.textPosition2]}>支出</Text>
+      </TouchableOpacity>
+
+      {/* 體重 */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Weight_homepage")}
+      >
+        <Image
+          style={[styles.weight2Icon, styles.weight2IconPosition]}
+          contentFit="cover"
+          source={require("../assets/weight-1.png")}
+        />
+        <Text style={[styles.text2, styles.textTypo2]}>體重</Text>
+      </TouchableOpacity>
+      {/* 小知識 */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Tips")}
+      >
+        <Image
+        style={[styles.icon1]}
         contentFit="cover"
-        source={require("../assets/animalshelter-1.png")}
+        source={require("../assets/8.png")}
       />
+        <Text style={[styles.text11, styles.textTypo]}>小知識</Text>
+      </TouchableOpacity>
+      {/* 爬蟲 */}
+     <TouchableOpacity
+      onPress={() => navigation.navigate("Search_products")}
+     >
       <Image
         style={[styles.calendar1Icon, styles.textPosition2]}
         contentFit="cover"
         source={require("../assets/calendar-1.png")}
       />
-      <Image
-        style={styles.icon1}
+      <Text style={[styles.text10, styles.textTypo]}>爬蟲</Text>
+     </TouchableOpacity>
+     <Image
+        style={styles.animalShelter1Icon}
         contentFit="cover"
-        source={require("../assets/8.png")}
+        source={require("../assets/animalshelter-1.png")}
       />
     </LinearGradient>
   );
@@ -250,8 +228,8 @@ const styles = StyleSheet.create({
   },
   iphone13144Child: {
     borderColor: Color.colorGray_100,
-    left: 33,
-    top: 132,
+    left: "10%",
+    top: "20%",
     width: 148,
     borderWidth: 1,
     borderStyle: "solid",
@@ -271,8 +249,8 @@ const styles = StyleSheet.create({
   },
   iphone13144Item: {
     borderColor: Color.colorGray_200,
-    top: 285,
-    left: 33,
+    top: "40%",
+    left: "10%",
     position: "absolute",
   },
   text2: {

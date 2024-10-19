@@ -3,10 +3,10 @@ import { AuthProvider } from './screens/AuthContext';
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
-import { ActivityIndicator } from "react-native";
-import { useState, useEffect } from "react";
-import auth from '@react-native-firebase/auth'; // Firebase Authentication
+// import { View, Text, Pressable, TouchableOpacity } from "react-native";
+// import { ActivityIndicator } from "react-native";
+// import { useState, useEffect } from "react";
+// import auth from '@react-native-firebase/auth'; // Firebase Authentication
 
 import Mainpage from "./screens/Mainpage";
 import Vaccine_details from "./screens/Vaccine_details";

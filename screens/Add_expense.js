@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Image, TextInput } from "react-native";
-import { StyleSheet, TouchableOpacity, View, Text,ScrollView } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text,ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Calendar } from 'react-native-calendars';
 import { ref, set,get} from 'firebase/database';
@@ -63,70 +63,77 @@ const Add_expense = () => {
         price: parseFloat(price),
       });
 
-      alert('添加成功!');
+      Alert.alert('通知','添加成功!');
       navigation.navigate("Expense_page");
     } catch (error) {
-      alert('價格須輸入數字');
+      Alert.alert('通知','價格須輸入數字');
     }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-      {/* 包含返回鍵和 Diary_Cat 的區塊 */}
-      <View style={styles.headerRow}>
-        {/* 返回鍵 */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Expense_page")}
-        >
-          <Image
-            style={styles.icon}
-            contentFit="cover"
-            source={require("../assets/1.png")}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView>
+          {/* 包含返回鍵和 Diary_Cat 的區塊 */}
+          <View style={styles.headerRow}>
+            {/* 返回鍵 */}
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate("Expense_page")}
+            >
+              <Image
+                style={styles.icon}
+                contentFit="cover"
+                source={require("../assets/1.png")}
+              />
+            </TouchableOpacity>
+
+            {/* Diary_Cat 文字 */}
+            <Text style={styles.footerText}>Diary_Cat</Text>
+          </View>
+
+          {/* 日曆 */}
+          <Calendar
+            onDayPress={handleDateSelect}
+            markedDates={{
+              [selectedDate]: {
+                selected: true,
+                selectedColor: 'pink',
+              },
+            }}
+            style={styles.calendar}
           />
-        </TouchableOpacity>
 
-        {/* Diary_Cat 文字 */}
-        <Text style={styles.footerText}>Diary_Cat</Text>
-      </View>
+          {/* 花費事項 */}
+          <Text style={styles.label}>花費事項</Text>
+          <TextInput
+            style={styles.inputBox}
+            value={itemDescription}
+            onChangeText={setItemDescription}
+            placeholder="請輸入花費事項"
+          />
 
-      {/* 日曆 */}
-      <Calendar
-        onDayPress={handleDateSelect}
-        markedDates={{
-          [selectedDate]: {
-            selected: true,
-            selectedColor: 'pink',
-          },
-        }}
-        style={styles.calendar}
-      />
-
-      {/* 花費事項 */}
-      <Text style={styles.label}>花費事項</Text>
-      <TextInput
-        style={styles.inputBox}
-        value={itemDescription}
-        onChangeText={setItemDescription}
-        placeholder="請輸入花費事項"
-      />
-
-      {/* 價格 */}
-      <Text style={styles.label}>價格</Text>
-      <TextInput
-        style={styles.inputBox}
-        value={price}
-        onChangeText={setPrice}
-        placeholder="請輸入數字"
-      />
-      </ScrollView>
+          {/* 價格 */}
+          <Text style={styles.label}>價格</Text>
+          <TextInput
+            style={styles.inputBox}
+            value={price}
+            onChangeText={setPrice}
+            placeholder="請輸入數字"
+            keyboardType="numeric"
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
       {/* 確定送出按鈕 */}
       <TouchableOpacity
         style={styles.submitButton}
         onPress={handleSubmit}
       >
         <Text style={styles.submitButtonText}>確定送出</Text>
+        
       </TouchableOpacity>
       
     </View>

@@ -1,12 +1,47 @@
 import * as React from "react";
-import { StyleSheet, View, Pressable, Text } from "react-native";
+import { useState, useEffect } from "react";
 import { Image } from "expo-image";
+import { StyleSheet, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import { useAuth } from "../screens/AuthContext";
+import { getDatabase, ref, get } from "firebase/database"; // Add Firebase database imports
 
 const Profile_settings = () => {
   const navigation = useNavigation();
+  const { user } = useAuth();
+  const [profile, setProfile] = useState({
+    age: "",
+    birthday: "",
+    breed: "",
+    catName: "",
+    color: "",
+    gender: "",
+    neuteredStatus: ""
+  });
+
+  // Fetch data from Firebase when the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      const db = getDatabase();
+      const uid = user.uid;
+      const profileRef = ref(db, `uid/${uid}/profile`);
+
+      // Fetch profile data from Firebase
+      get(profileRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            setProfile(snapshot.val());
+          } else {
+            console.log("No data available");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, [user]) // Dependency array ensures it runs when user changes
+  );
 
   return (
     <View style={styles.view}>
@@ -31,40 +66,42 @@ const Profile_settings = () => {
         locations={[0, 1]}
         colors={["#fef6db", "#fdfdfd"]}
       />
-      <Image
-        style={[styles.rectangleIcon, styles.wrapperLayout]}
-        contentFit="cover"
-        source={require("../assets/rectangle-11.png")}
-      />
       <Pressable
-        style={[styles.wrapper, styles.wrapperLayout]}
+        style={({ pressed }) => [
+          styles.wrapper,
+          styles.wrapperLayout,
+          { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' } // Change color when pressed
+        ]}
         onPress={() => navigation.navigate("Settings")}
       >
         <Image
-          style={[styles.icon1, styles.iconLayout]}
+          style={[styles.icon2, { position: "relative", top: 0, left: "-30%" }]}
           contentFit="cover"
-          source={require("../assets/rectangle-11.png")}
+          source={require("../assets/12.png")}
         />
+        <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
       </Pressable>
-      <Image
-        style={styles.unionIcon}
-        contentFit="cover"
-        source={require("../assets/union2.png")}
-      />
-      <Text style={[styles.text, styles.textTypo1]}>顏色:</Text>
-      <Text style={[styles.text1, styles.textTypo]}>是否結紮:</Text>
-      <Text style={[styles.text2, styles.textTypo1]}>關於我們</Text>
-      <Text style={[styles.text3, styles.textTypo]}>性別:</Text>
-      <Text style={[styles.text4, styles.textTypo]}>品種:</Text>
-      <Text style={[styles.text5, styles.textTypo]}>年紀:</Text>
-      <Text style={[styles.text6, styles.textTypo]}>生日:</Text>
-      <Text style={[styles.text7, styles.textTypo]}>貓咪姓名:</Text>
-      <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
-      <Image
-        style={styles.icon2}
-        contentFit="cover"
-        source={require("../assets/12.png")}
-      />
+      <Pressable
+        style={({ pressed }) => [
+          styles.rectangleIcon,
+          styles.wrapperLayout,
+          { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' } // Change color when pressed
+        ]}>
+        <Image
+          style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
+          contentFit="cover"
+          source={require("../assets/union2.png")}
+        />
+        <Text style={styles.textTypo1}>關於我們</Text>
+        {/* <Text style={styles.textTypo1}>{user.email}</Text> */}
+      </Pressable>
+      <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
+      <Text style={[styles.text1, styles.textTypo]}>是否結紮: {profile.neuteredStatus}</Text>
+      <Text style={[styles.text3, styles.textTypo]}>性別: {profile.gender}</Text>
+      <Text style={[styles.text4, styles.textTypo]}>品種: {profile.breed}</Text>
+      <Text style={[styles.text5, styles.textTypo]}>年紀: {profile.age}</Text>
+      <Text style={[styles.text6, styles.textTypo]}>生日: {profile.birthday}</Text>
+      <Text style={[styles.text7, styles.textTypo]}>貓咪姓名: {profile.catName}</Text>
       <Pressable
         style={[styles.edit, styles.editPosition]}
         onPress={() => navigation.navigate("Edit_profile_settings")}
@@ -88,6 +125,9 @@ const styles = StyleSheet.create({
     height: 58,
     width: 193,
     left: 54,
+    borderRadius: Border.br_61xl,
+    justifyContent: 'center',
+    alignItems: 'center',
     position: "absolute",
   },
   iconLayout: {
@@ -122,17 +162,16 @@ const styles = StyleSheet.create({
     height: 778,
   },
   icon: {
-    marginLeft: -76.5,
     top: 24,
-    left: "50%",
-    width: 141,
+    left: "20%",
+    width: 140,
     height: 142,
     position: "absolute",
   },
   item: {
     top: 35,
-    left: 85,
-    width: 122,
+    left: "22.5%",
+    width: 120,
     height: 121,
     position: "absolute",
   },
@@ -161,13 +200,13 @@ const styles = StyleSheet.create({
     top: 562,
   },
   unionIcon: {
-    width: 36,
-    height: 34,
+    width: 34,
+    height: 32,
   },
   text: {
     top: 346,
-    height: 27,
-    width: 59,
+    // height: 27,
+    // width: 59,
     left: 50,
     textAlign: "left",
     color: Color.colorBlack,
@@ -177,45 +216,41 @@ const styles = StyleSheet.create({
   },
   text1: {
     top: 495,
-    width: 110,
-    height: 28,
-  },
-  text2: {
-    top: 658,
-    left: 120,
+    // width: 110,
+    // height: 28,
   },
   text3: {
     top: 246,
-    width: 59,
+    // width: 59,
   },
   text4: {
     top: 296,
-    width: 59,
+    // width: 59,
   },
   text5: {
     top: 395,
-    width: 59,
+    // width: 59,
   },
   text6: {
     top: 445,
-    width: 59,
+    // width: 59,
   },
   text7: {
     top: 196,
-    width: 110,
-    height: 28,
+    // width: 110,
+    // height: 28,
   },
   text8: {
-    top: 579,
-    left: 150,
+    // top: 579,
+    // left: 150,
   },
   icon2: {
     top: 567,
     left: 72,
-    width: 48,
-    height: 48,
+    width: 36,
+    height: 36,
     overflow: "hidden",
-    position: "absolute",
+    // position: "absolute",
   },
   icon3: {
     overflow: "hidden",

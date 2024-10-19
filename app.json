@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "diarycat_0916",
+    "name": "Diary Cat",
     "slug": "diarycat_0916",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,13 +18,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.diarycat.diarycat"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.diarycat.diarycat"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +34,11 @@
     "plugins": [
       "expo-font",
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "eb8cc2a5-a48b-4023-944f-82a1e34c5626"
+      }
+    }
   }
 }
