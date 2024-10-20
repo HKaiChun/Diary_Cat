@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View,TouchableOpacity, Touchable } from "react-native";
+import { StyleSheet, Pressable, Text, View, TouchableOpacity, Touchable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
@@ -10,7 +10,7 @@ const Mainpage = () => {
   const navigation = useNavigation();
   const route = useRoute(); // Import useRoute to access route params
   const { userEmail } = route.params || {}; // Destructure userEmail from route params
-  const {user, loading} = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -22,12 +22,12 @@ const Mainpage = () => {
       </View>
     );
   }
-  
+
   return (
     <LinearGradient
-    style={[styles.iphone13144, styles.iconLayout2]}
-    locations={[0.52, 1]}
-    colors={["#fffedf", "#e0e0e0"]}
+      style={[styles.iphone13144, styles.iconLayout2]}
+      locations={[0.52, 1]}
+      colors={["#fffedf", "#e0e0e0"]}
     >
       {/* 飲水底 */}
       <View style={[styles.iphone13144Child, styles.iphone13144ChildLayout1]} />
@@ -36,7 +36,7 @@ const Mainpage = () => {
       {/* 支出底 */}
       <View style={[styles.iphone13144Inner, styles.iphone13144ChildLayout1]} />
       {/* 疫苗底 */}
-      <View style={[styles.iphone13144Child5, styles.weight2IconPosition]} /> 
+      <View style={[styles.iphone13144Child5, styles.weight2IconPosition]} />
       {/* 小知識底 */}
       <View style={[styles.iphone13144Child8, styles.iphone13144ChildLayout]} />
       {/* 爬蟲 */}
@@ -45,28 +45,37 @@ const Mainpage = () => {
       {/* 測試是否可以將資料抓出來 */}
       <Text>Welcome, {user.email}!</Text>
 
-      <Text style={styles.text}>Diary_Cat</Text>
-      <Text >{user.uid}</Text>
-      {/*
-      {/* 飲水 */}
       <TouchableOpacity
-        onPress={() => {navigation.navigate("Water_intake_page");console.log("hihi")}}
+        style={styles.alignJustify}
+        onPress={() => navigation.navigate("Profile_settings")}
       >
         <Image
-        style={[styles.fountain2Icon, styles.iconPosition]}
-        contentFit="cover"
-        source={require("../assets/fountain-2.png")}
+          style={[styles.icon, styles.iconLayout2]}
+          contentFit="cover"
+          source={require("../assets/align-justify.png")}
+        />
+      </TouchableOpacity>
+      <Text style={styles.text}>Diary_Cat</Text>
+      <Text >{user.uid}</Text>
+      {/* 飲水 */}
+      <TouchableOpacity
+        onPress={() => { navigation.navigate("Water_intake_page"); console.log("hihi") }}
+      >
+        <Image
+          style={[styles.fountain2Icon, styles.iconPosition]}
+          contentFit="cover"
+          source={require("../assets/fountain-2.png")}
         />
         <Text style={[styles.text6, styles.textTypo]}>飲水</Text>
       </TouchableOpacity>
       {/* 疫苗 */}
       <TouchableOpacity
-          onPress={() => navigation.navigate("Vaccine_homepage")}
+        onPress={() => navigation.navigate("Vaccine_homepage")}
       >
         <Image
-        style={styles.syringe1Icon}
-        contentFit="cover"
-        source={require("../assets/syringe-1.png")}
+          style={styles.syringe1Icon}
+          contentFit="cover"
+          source={require("../assets/syringe-1.png")}
         />
         <Text style={[styles.text9, styles.text9Position]}>疫苗接種</Text>
       </TouchableOpacity>
@@ -76,9 +85,9 @@ const Mainpage = () => {
         onPress={() => navigation.navigate("Expense_page")}
       >
         <Image
-        style={[styles.earnIcon, styles.iconLayout]}
-        contentFit="cover"
-        source={require("../assets/earn.png")}
+          style={[styles.earnIcon, styles.iconLayout]}
+          contentFit="cover"
+          source={require("../assets/earn.png")}
         />
         <Text style={[styles.text3, styles.textPosition2]}>支出</Text>
       </TouchableOpacity>
@@ -99,24 +108,24 @@ const Mainpage = () => {
         onPress={() => navigation.navigate("Tips")}
       >
         <Image
-        style={[styles.icon1]}
-        contentFit="cover"
-        source={require("../assets/8.png")}
-      />
+          style={[styles.icon1]}
+          contentFit="cover"
+          source={require("../assets/8.png")}
+        />
         <Text style={[styles.text11, styles.textTypo]}>小知識</Text>
       </TouchableOpacity>
       {/* 爬蟲 */}
-     <TouchableOpacity
-      onPress={() => navigation.navigate("Search_products")}
-     >
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Search_products")}
+      >
+        <Image
+          style={[styles.calendar1Icon, styles.textPosition2]}
+          contentFit="cover"
+          source={require("../assets/calendar-1.png")}
+        />
+        <Text style={[styles.text10, styles.textTypo]}>爬蟲</Text>
+      </TouchableOpacity>
       <Image
-        style={[styles.calendar1Icon, styles.textPosition2]}
-        contentFit="cover"
-        source={require("../assets/calendar-1.png")}
-      />
-      <Text style={[styles.text10, styles.textTypo]}>爬蟲</Text>
-     </TouchableOpacity>
-     <Image
         style={styles.animalShelter1Icon}
         contentFit="cover"
         source={require("../assets/animalshelter-1.png")}
