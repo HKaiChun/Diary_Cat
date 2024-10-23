@@ -1,170 +1,280 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import { StyleSheet, TouchableOpacity, Pressable, Text, View, Alert, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { useAuth } from "../screens/AuthContext";
+
+// import * as Device from 'expo-device';
+import * as TaskManager from 'expo-task-manager';
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as Notifications from 'expo-notifications'; // 推送通知
+// import Constants from "expo-constants"; // Optional
+
+// 全局設置通知處理程序
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true, // 確保通知顯示
+    shouldPlaySound: true, // 通知聲音
+    shouldSetBadge: false, // 角標
+  }),
+});
+
+// 定义後臺任務
+TaskManager.defineTask('BACKGROUND_NOTIFICATION_TASK', async () => {
+  try {
+    console.log('Running background notification task');
+    // 发送通知
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "背景通知",
+        body: "這是來自背景的推送通知",
+      },
+      trigger: null, // 立即触发
+    });
+
+    return BackgroundFetch.BackgroundFetchResult.NewData;
+  } catch (error) {
+    console.error('背景任務通知失败:', error);
+    return BackgroundFetch.BackgroundFetchResult.Failed;
+  }
+});
+
+// 註冊後臺任務
+const registerBackgroundTask = async () => {
+  try {
+    await BackgroundFetch.registerTaskAsync('BACKGROUND_NOTIFICATION_TASK', {
+      minimumInterval: 60, // 最小时间间隔，单位为秒
+      stopOnTerminate: false, // 应用被终止时继续运行
+      startOnBoot: true, // 设备重启后自动启动任務
+    });
+    console.log('後臺任務註冊成功');
+  } catch (error) {
+    console.error('後臺任務註冊失败:', error);
+  }
+};
 
 const Settings = () => {
   const navigation = useNavigation();
+  const { user, loading } = useAuth();
+  const [isOn, setIsOn] = useState(true);
+  const [notificationInterval, setNotificationInterval] = useState(null); // 存儲通知定時器ID
+
+  // 請求推送通知權限
+  useEffect(() => {
+    const requestPermissions = async () => {
+      try {
+        const { status: currentStatus } = await Notifications.getPermissionsAsync();
+        if (currentStatus !== 'granted') {
+          const { status: requestedStatus } = await Notifications.requestPermissionsAsync();
+          if (requestedStatus !== 'granted') {
+            Alert.alert('無法取得推送通知權限');
+            return;
+          }
+        }
+
+        if (Platform.OS === 'android') {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            sound: true,
+          });
+        }
+      } catch (error) {
+        console.error('Error while requesting notification permissions:', error);
+      }
+    };
+
+    requestPermissions();
+  }, []);
+
+  useEffect(() => {
+    // 监听通知接收事件
+    // const subscription = Notifications.addNotificationReceivedListener(notification => {
+    //   console.log('Notification received:', notification);
+    // });
+
+    // return () => subscription.remove();
+    registerBackgroundTask();
+  }, []);
+
+  // 切換按鈕狀態
+  const toggleNotification = () => {
+    const newState = !isOn;
+    setIsOn(newState);
+
+    // 當切換到開啟狀態時，每10秒發送一次推送通知
+    if (newState) {
+      sendNotification(); // 立即觸發一次通知
+
+      const intervalId = setInterval(() => {
+        sendNotification();
+      }, 10000); // 每10秒觸發一次
+      setNotificationInterval(intervalId); // 保存定時器ID
+
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        // 判斷是否為設備
+        console.log("turn on notification");
+      }
+    } else {
+      // 當通知狀態切換到關閉時，清除定時器
+      if (notificationInterval) {
+        clearInterval(notificationInterval);
+        setNotificationInterval(null);
+
+        // 取消所有已安排的推送通知
+        Notifications.cancelAllScheduledNotificationsAsync().then(() => {
+          console.log("所有計畫的推送通知已取消");
+        });
+
+        if (Platform.OS === 'ios' || Platform.OS === 'android') {
+          // 判斷是否為設備
+          console.log("turn off notification");
+        }
+      }
+    }
+  };
+
+  // 發送推送通知的函數
+  const sendNotification = async () => {
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "通知",
+          body: "這是每10秒的推送通知",
+        },
+        trigger: null, // 立即觸發
+      });
+    } catch (error) {
+      console.error('通知發送失敗', error);
+    }
+  };
+
+  // 當使用者沒有透過登入介面登入時，不會讓他進入其他介面（因為沒有登入）
+  // React.useEffect(() => {
+  //   // Perform navigation only after the component has rendered
+  //   if (!loading && !user) {
+  //     navigation.navigate('Login'); // Replace 'Login' with your login screen's name
+  //   }
+  // }, [loading, user, navigation]);
+
+  // if (loading) {
+  //   return <ActivityIndicator size="large" color="#0000ff" />;
+  // }
+
+  // if (!user) {
+  //   // Prevent rendering any UI if the user is not logged in
+  //   return null;
+  // }
 
   return (
     <View style={styles.view}>
-      <Image
-        style={styles.icon}
-        contentFit="cover"
-        source={require("../assets/0.png")}
-      />
-      <Image
-        style={styles.icon1}
-        contentFit="cover"
-        source={require("../assets/1.png")}
-      />
-      <Image
-        style={styles.child}
-        contentFit="cover"
-        source={require("../assets/rectangle-12.png")}
-      />
-      <Pressable
-        style={[styles.wrapper, styles.wrapperLayout]}
-        onPress={() => navigation.navigate("Login")}
-      >
-        <Image
-          style={styles.icon2}
-          contentFit="cover"
-          source={require("../assets/rectangle-15.png")}
-        />
-      </Pressable>
-      <Pressable
-        style={[styles.container, styles.wrapperLayout]}
-        onPress={() => navigation.navigate("Enter_old_password")}
-      >
-        <Image
-          style={styles.icon2}
-          contentFit="cover"
-          source={require("../assets/rectangle-15.png")}
-        />
-      </Pressable>
-      <Text style={[styles.text, styles.textFlexBox]}>通知</Text>
-      <Text style={[styles.text1, styles.textTypo]}>切換帳號</Text>
-      <Text style={[styles.text2, styles.textTypo]}>更改密碼</Text>
-      <Text style={[styles.text3, styles.textFlexBox]}>Diary_Cat</Text>
-      <Image
-        style={styles.vectorIcon}
-        contentFit="cover"
-        source={require("../assets/vector1.png")}
-      />
-      <Text style={[styles.text4, styles.textFlexBox]}>開啟</Text>
+      {/* 包含返回鍵和 Diary_Cat 的區塊 */}
+      <View style={styles.headerRow}>
+        {/* 返回鍵 */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Profile_settings")}
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/1.png")}
+          />
+        </TouchableOpacity>
+
+        {/* Diary_Cat 文字 */}
+        <Text style={styles.footerText}>Diary_Cat</Text>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            styles.button
+          ]}
+          onPress={toggleNotification} // 點擊事件
+        >
+          <Text style={styles.textTypo}>
+            {isOn ? '通知：開啟' : '通知：關閉'} {/* 根據狀態顯示文本 */}
+          </Text>
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            styles.button]}
+          onPress={() =>
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            })
+          }
+        >
+          <Text style={styles.textTypo}>切換帳號</Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            styles.button]}
+          onPress={() => navigation.navigate("Forgot_password")}
+        >
+          <Text style={styles.textTypo}>更改密碼</Text>
+          {/* <Text style={styles.textTypo}>{user.email}, {user.uid}</Text> */}
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapperLayout: {
-    height: 60,
-    width: 283,
-    left: 54,
-    position: "absolute",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
-  textFlexBox: {
-    textAlign: "left",
-    position: "absolute",
-  },
-  textTypo: {
-    height: 40,
-    textAlign: "left",
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interRegular,
-    fontSize: FontSize.size_13xl,
-    position: "absolute",
-  },
-  icon: {
-    top: 19,
-    left: 21,
-    width: 78,
-    height: 71,
-    position: "absolute",
-  },
-  icon1: {
-    top: 30,
-    left: 36,
+  backButton: {
     width: 48,
     height: 48,
-    position: "absolute",
-    overflow: "hidden",
+    marginRight: 10,
   },
-  child: {
-    top: 238,
-    left: 53,
-    width: 285,
-    height: 58,
-    borderRadius: Border.br_xl,
-    position: "absolute",
-  },
-  icon2: {
-    height: "100%",
-    borderRadius: Border.br_xl,
-    width: "100%",
-  },
-  wrapper: {
-    top: 611,
-  },
-  container: {
-    top: 422,
-  },
-  text: {
-    top: 246,
-    left: 124,
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interRegular,
-    fontSize: FontSize.size_13xl,
-    textAlign: "left",
-  },
-  text1: {
-    top: 621,
-    left: 141,
-    width: 128,
-  },
-  text2: {
-    top: 432,
-    left: 130,
-    width: 190,
-  },
-  text3: {
-    marginTop: -403,
-    marginLeft: -65,
-    top: "50%",
+  footerText: {
+    color: Color.colorGray_500,
     left: "50%",
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,
-    color: Color.colorGray_500,
-    width: 242,
   },
-  vectorIcon: {
-    height: "4.86%",
-    width: "10%",
-    top: "29.03%",
-    right: "37.44%",
-    bottom: "66.11%",
-    left: "52.56%",
-    maxWidth: "100%",
-    maxHeight: "100%",
-    position: "absolute",
-    overflow: "hidden",
+  icon: {
+    width: "100%",
+    height: "100%",
   },
-  text4: {
-    top: 247,
-    left: 261,
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interRegular,
-    fontSize: FontSize.size_13xl,
-    textAlign: "left",
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "center", // 垂直居中
+    alignItems: "center",     // 水平居中
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    borderRadius: Border.br_61xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: "20%",
   },
   view: {
-    backgroundColor: Color.colorLightyellow,
     flex: 1,
-    height: 844,
-    overflow: "hidden",
-    width: "100%",
+    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  textTypo: {
+    textAlign: "left",
+    color: Color.colorBlack,
+    fontFamily: FontFamily.interBold,
+    fontWeight: "700",
+    fontSize: FontSize.size_xl,
+    position: "absolute",
   },
 });
 

@@ -1,11 +1,31 @@
 import * as React from "react";
+import { useRef, useEffect } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 
 const Initial_screen = () => {
   const navigation = useNavigation();
+  const fadeAnim = useRef(new Animated.Value(1)).current; // 初始 opacity 值為 1
+
+  useEffect(() => {
+    // 創建一个循環的閃爍动画
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0, // 隱藏
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1, // 顯示
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [fadeAnim]);
 
   return (
     <Pressable
@@ -24,7 +44,13 @@ const Initial_screen = () => {
           source={require("../assets/s--6266884-preview-rev-1-1.png")}
         />
         <Text style={[styles.welcome, styles.textTypo]}>Welcome !</Text>
-        <Text style={[styles.text, styles.textTypo]}>點擊畫面進入</Text>
+        
+        {/* 使用 Animated.Text 來支持動畫效果 */}
+        <Animated.Text
+          style={[styles.text, styles.textTypo, { opacity: fadeAnim }]}
+        >
+          點擊畫面進入
+        </Animated.Text>
       </View>
     </Pressable>
   );
@@ -35,7 +61,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     position: "absolute",
-    height: 852,
+    height: "100%",
   },
   textTypo: {
     textAlign: "left",
@@ -44,7 +70,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   icon: {
-    width: 393,
+    width: "100%",
   },
   s6266884PreviewRev11Icon: {
     top: 195,
@@ -60,12 +86,12 @@ const styles = StyleSheet.create({
   },
   text: {
     top: 636,
-    left: 121,
+    alignSelf: 'center',
     fontSize: FontSize.size_5xl,
   },
   view: {
     backgroundColor: Color.colorWhite,
-    width: 390,
+    width: "100%",
     overflow: "hidden",
   },
   pressable: {

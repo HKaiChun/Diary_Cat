@@ -1,15 +1,17 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, Pressable, View, TextInput, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH } from '../FirebaseConfig'
-import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { router } from 'expo-router';
+import { Border } from "../GlobalStyles";
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from "../screens/AuthContext";
+// import { router } from 'expo-router';
 
 const Login = () => {
   const navigation = useNavigation();
+  const { user } = useAuth();
 
   // return (
   //   <View style={styles.view}>
@@ -78,6 +80,10 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const auth = FIREBASE_AUTH;
 
+  useEffect(() => {
+    auth.signOut(); // 每次進入登入頁面時，強制登出
+  }, []);
+
   const signIn = async () => {
     if (!email || !password) {
       // alert('Please enter a valid email and password.');
@@ -121,6 +127,9 @@ const Login = () => {
       />
       <View style={styles.formContainer}>
         <Text style={styles.title}>登入</Text>
+        
+        {/* 以下{user.email}測試是否有成功登出，正常來講不應該會出現文字 */}
+        {/* <Text style={styles.title}>{user.email}</Text> */}
 
         <Text style={styles.label}>Email：</Text>
         <TextInput

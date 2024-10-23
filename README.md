@@ -4,3 +4,7 @@
 3. 於 screens 資料夾中，新增 AuthContext.js 檔
 4. 登入時須將整個信箱名稱完整輸入
 5. 於忘記密碼輸入 email 處，若是輸入如：@gmail.co 時，不會警告格式錯誤，而是警告不存在此 email
+6. 要知道目前誰是使用者，如下：
+import { useAuth } from "../screens/AuthContext";
+const { user } = useAuth();
+然後再用Text測試，如：Text 元素中，可以用{user.email}, {user.uid}等測試

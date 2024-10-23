@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View, TouchableOpacity, Touchable } from "react-native";
+import { StyleSheet, Pressable, Text, View, TouchableOpacity, Touchable, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
@@ -12,15 +12,21 @@ const Mainpage = () => {
   const { userEmail } = route.params || {}; // Destructure userEmail from route params
   const { user, loading } = useAuth();
 
+  // 當使用者沒有透過登入介面登入時，不會讓他進入其他介面（因為沒有登入）
+  React.useEffect(() => {
+    // Perform navigation only after the component has rendered
+    if (!loading && !user) {
+      navigation.navigate('Login'); // Replace 'Login' with your login screen's name
+    }
+  }, [loading, user, navigation]);
+
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
+
   if (!user) {
-    return (
-      <View>
-        <Text>You need to log in.</Text>
-      </View>
-    );
+    // Prevent rendering any UI if the user is not logged in
+    return null;
   }
 
   return (

@@ -1,9 +1,9 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import { useAuth } from "../screens/AuthContext";
 import { getDatabase, ref, get } from "firebase/database"; // Add Firebase database imports
@@ -20,6 +20,7 @@ const Profile_settings = () => {
     gender: "",
     neuteredStatus: ""
   });
+  // const [loading, setLoading] = useState(true); // 狀態變數，用於追蹤數據加載狀態
 
   // Fetch data from Firebase when the screen is focused
   useFocusEffect(
@@ -93,7 +94,7 @@ const Profile_settings = () => {
           source={require("../assets/union2.png")}
         />
         <Text style={styles.textTypo1}>關於我們</Text>
-        {/* <Text style={styles.textTypo1}>{user.email}</Text> */}
+        {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
       </Pressable>
       <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
       <Text style={[styles.text1, styles.textTypo]}>是否結紮: {profile.neuteredStatus}</Text>
@@ -117,6 +118,11 @@ const Profile_settings = () => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   editPosition: {
     left: 29,
     position: "absolute",
