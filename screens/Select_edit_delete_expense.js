@@ -173,7 +173,7 @@ const Select_edit_delete_expense = () => {
           source={require("../assets/vector.png")}
         />
       </Pressable>
-      <Text style={styles.text2}>Diary_Cat</Text>
+      <Text style={styles.text2}>CatMinder</Text>
     </View>
   );
 };

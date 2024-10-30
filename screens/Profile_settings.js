@@ -1,15 +1,18 @@
 import * as React from "react";
 import { useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import { StyleSheet, Pressable, Text, View, TextInput } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { format } from "date-fns"; // 用於格式化日期
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import { useAuth } from "../screens/AuthContext";
-import { getDatabase, ref, get } from "firebase/database"; // Add Firebase database imports
+import { getDatabase, ref, get, set } from "firebase/database"; // Add Firebase database imports
 
 const Profile_settings = () => {
   const navigation = useNavigation();
+  // const drawerStatus = useDrawerStatus(); // Listen to drawer status
   const { user } = useAuth();
   const [profile, setProfile] = useState({
     age: "",
@@ -20,7 +23,27 @@ const Profile_settings = () => {
     gender: "",
     neuteredStatus: ""
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // 控制日期選擇器顯示狀態
   // const [loading, setLoading] = useState(true); // 狀態變數，用於追蹤數據加載狀態
+
+  // Reset edit mode when drawer is closed
+  // useEffect(() => {
+  //   if (drawerStatus === "closed") {
+  //     setIsEditing(false);
+  //   }
+  // }, [drawerStatus]);
+
+  // Mapping English keys to Chinese labels
+  const keyTranslations = {
+    age: "年紀",
+    birthday: "生日",
+    breed: "品種",
+    catName: "貓咪姓名",
+    color: "顏色",
+    gender: "性別",
+    neuteredStatus: "是否結紮"
+  };
 
   // Fetch data from Firebase when the screen is focused
   useFocusEffect(
@@ -44,10 +67,52 @@ const Profile_settings = () => {
     }, [user]) // Dependency array ensures it runs when user changes
   );
 
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    if (isEditing) {
+      // Save data to Firebase when switching from edit mode to view mode
+      const db = getDatabase();
+      const uid = user.uid;
+      set(ref(db, `uid/${uid}/profile`), profile);
+    }
+  };
+
+  const handleChange = (field, value) => {
+    setProfile((prevProfile) => ({ ...prevProfile, [field]: value }));
+  };
+
+  // Function to calculate age based on selected birthday
+  const calculateAge = (birthdayDate) => {
+    const today = new Date();
+    const birthDate = new Date(birthdayDate);
+    let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    // Adjust age if the current month is before the birth month or if it's the birth month but the day hasn't passed
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      calculatedAge--;
+    }
+    return calculatedAge;
+  };
+
+  // Date picker handling functions
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
+
+  const handleConfirm = (date) => {
+    const formattedDate = format(date, "yyyy-MM-dd"); // Format date as 'YYYY-MM-DD'
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      birthday: formattedDate,
+      age: calculateAge(formattedDate).toString()
+    }));
+    hideDatePicker();
+  };
+
   return (
     <View style={styles.view}>
       <View style={styles.child} />
-      <Image
+      {/* <Image
         style={styles.icon}
         contentFit="cover"
         source={require("../assets/5.png")}
@@ -61,7 +126,7 @@ const Profile_settings = () => {
         style={styles.cameraIcon}
         contentFit="cover"
         source={require("../assets/camera.png")}
-      />
+      /> */}
       <LinearGradient
         style={[styles.inner, styles.editPosition]}
         locations={[0, 1]}
@@ -71,7 +136,7 @@ const Profile_settings = () => {
         style={({ pressed }) => [
           styles.wrapper,
           styles.wrapperLayout,
-          { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' } // Change color when pressed
+          { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' } // Change color when pressed
         ]}
         onPress={() => navigation.navigate("Settings")}
       >
@@ -86,7 +151,7 @@ const Profile_settings = () => {
         style={({ pressed }) => [
           styles.rectangleIcon,
           styles.wrapperLayout,
-          { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' } // Change color when pressed
+          { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' } // Change color when pressed
         ]}>
         <Image
           style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
@@ -94,18 +159,36 @@ const Profile_settings = () => {
           source={require("../assets/union2.png")}
         />
         <Text style={styles.textTypo1}>關於我們</Text>
+
         {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
       </Pressable>
-      <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
+
+      {/* Editable Fields */}
+      {Object.keys(profile).map((key) => (
+        <View key={key} style={styles.fieldContainer}>
+          {isEditing ? (
+            <TextInput
+              style={styles.textTypo}
+              value={profile[key]}
+              onChangeText={(value) => handleChange(key, value)}
+              placeholder={`請輸入${keyTranslations[key]}`} // a hint
+            />
+          ) : (
+            <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile[key]}`}</Text>
+          )}
+        </View>
+      ))}
+      {/* <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
       <Text style={[styles.text1, styles.textTypo]}>是否結紮: {profile.neuteredStatus}</Text>
       <Text style={[styles.text3, styles.textTypo]}>性別: {profile.gender}</Text>
       <Text style={[styles.text4, styles.textTypo]}>品種: {profile.breed}</Text>
       <Text style={[styles.text5, styles.textTypo]}>年紀: {profile.age}</Text>
       <Text style={[styles.text6, styles.textTypo]}>生日: {profile.birthday}</Text>
-      <Text style={[styles.text7, styles.textTypo]}>貓咪姓名: {profile.catName}</Text>
+      <Text style={[styles.text7, styles.textTypo]}>貓咪姓名: {profile.catName}</Text> */}
       <Pressable
         style={[styles.edit, styles.editPosition]}
-        onPress={() => navigation.navigate("Edit_profile_settings")}
+        // onPress={() => navigation.navigate("Edit_profile_settings")}
+        onPress={handleEditToggle}
       >
         <Image
           style={[styles.icon3, styles.iconLayout]}
@@ -118,6 +201,9 @@ const Profile_settings = () => {
 };
 
 const styles = StyleSheet.create({
+  fieldContainer: {
+    marginVertical: 20,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -157,13 +243,14 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_xl,
     left: 50,
     position: "absolute",
+    top: 200,
   },
   child: {
     top: 0,
     left: 0,
     borderRadius: Border.br_13xl,
     backgroundColor: Color.colorWhite,
-    width: 303,
+    // width: 303,
     position: "absolute",
     height: 778,
   },

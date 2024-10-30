@@ -1,16 +1,18 @@
 import * as React from "react";
 import { Image } from "expo-image";
 import { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { Color, FontFamily, FontSize } from "../GlobalStyles";
 import { db } from "../FirebaseConfig";
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import moment from "moment";
+import { useAuth } from "./AuthContext";
 
 const Expense_page = () => {
   const navigation = useNavigation();
+  const {user} = useAuth();
   const isFocused = useIsFocused();
   const [expenses, setExpenses] = useState([]);
   const [selectedYear, setSelectedYear] = useState(moment().year()); // 當前年份
@@ -22,12 +24,21 @@ const Expense_page = () => {
   const years = Array.from({ length: 101 }, (_, i) => moment().year() - 50 + i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1); // 1 到 12 月
   
-  //確保頁面每次顯示時資料都能即時更新
   useEffect(() => {
     if (isFocused) {
-      updateExpenses(selectedYear, selectedMonth);
+      // 當頁面聚焦時，重設年份和月份為當前年份和月份
+      setSelectedYear(moment().year());
+      setSelectedMonth(moment().month() + 1); // 月份從 0 開始
+      updateExpenses(moment().year(), moment().month() + 1); // 同時重新更新當前月份的資料
     }
-  }, [isFocused, selectedYear, selectedMonth]);
+  }, [isFocused]);
+
+  // //確保頁面每次顯示時資料都能即時更新
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     updateExpenses(selectedYear, selectedMonth);
+  //   }
+  // }, [isFocused, selectedYear, selectedMonth]);
 
   // 更新支出資料
   const updateExpenses = async (year, month) => {
@@ -39,7 +50,7 @@ const Expense_page = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dayStr = `${formattedMonth}-${String(day).padStart(2, "0")}`;
-      const dbRef = ref(db, `expense/${dayStr}/item`);
+      const dbRef = ref(db, `uid/${user.uid}/expense/${dayStr}/item`);
 
       const promise = new Promise((resolve) => {
         onValue(
@@ -118,7 +129,7 @@ const Expense_page = () => {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Mainpage")}>
           <Image style={styles.icon} contentFit="cover" source={require("../assets/1.png")} />
         </TouchableOpacity>
-        <Text style={styles.footerText}>Diary_Cat</Text>
+        <Text style={styles.footerText}>CatMinder</Text>
       </View>
 
       <View style={styles.buttonRow}>
@@ -149,7 +160,10 @@ const Expense_page = () => {
           <Picker
             selectedValue={selectedYear}
             style={styles.picker}
-            onValueChange={(itemValue) => setSelectedYear(itemValue)}
+            onValueChange={(itemValue) => {
+              setSelectedYear(itemValue);
+              updateExpenses(itemValue, selectedMonth); // 更新資料
+            }}
           >
             {years.map((year) => (
               <Picker.Item key={year} label={String(year)} value={year} />
@@ -159,7 +173,10 @@ const Expense_page = () => {
           <Picker
             selectedValue={selectedMonth}
             style={styles.picker}
-            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+            onValueChange={(itemValue) => {
+              setSelectedMonth(itemValue);
+              updateExpenses(selectedYear, itemValue); // 更新資料
+            }}
           >
             {months.map((month) => (
               <Picker.Item key={month} label={String(month)} value={month} />
@@ -173,7 +190,7 @@ const Expense_page = () => {
           {expenses.length === 0 ? (
             // 如果該月份沒有任何支出，顯示預設消息
             <View style={styles.noDataContainer}>
-              <Text style={styles.noDataText}>{selectedYear}-{selectedMonth} 無支出</Text>
+              <Text style={styles.noDataText}>{selectedYear}-{selectedMonth} 無支出紀錄</Text>
             </View>
           ) : (
             // 否則顯示正常的支出列表
@@ -219,6 +236,7 @@ const styles = StyleSheet.create({
   footerText: {
     color: Color.colorGray_500,
     left: "50%",
+    width: 242,
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,
   },

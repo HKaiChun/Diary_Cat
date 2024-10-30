@@ -45,7 +45,7 @@ const Sign_up = () => {
       // Save user profile in Realtime Database
       const userRef = ref(db, `uid/${user.uid}/profile/`);
       await set(userRef, {
-        email,
+        // email,
         catName: "",
         gender: "",
         breed: "",

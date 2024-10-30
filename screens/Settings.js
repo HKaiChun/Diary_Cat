@@ -21,17 +21,17 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// 定义後臺任務
+// 定義後臺任務
 TaskManager.defineTask('BACKGROUND_NOTIFICATION_TASK', async () => {
   try {
     console.log('Running background notification task');
-    // 发送通知
+    // 發送通知
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "背景通知",
         body: "這是來自背景的推送通知",
       },
-      trigger: null, // 立即触发
+      trigger: null, // 立即觸發
     });
 
     return BackgroundFetch.BackgroundFetchResult.NewData;
@@ -45,9 +45,9 @@ TaskManager.defineTask('BACKGROUND_NOTIFICATION_TASK', async () => {
 const registerBackgroundTask = async () => {
   try {
     await BackgroundFetch.registerTaskAsync('BACKGROUND_NOTIFICATION_TASK', {
-      minimumInterval: 60, // 最小时间间隔，单位为秒
-      stopOnTerminate: false, // 应用被终止时继续运行
-      startOnBoot: true, // 设备重启后自动启动任務
+      minimumInterval: 60, // 最小時間間隔，單位為秒
+      stopOnTerminate: false, // 應用被终止时繼續運行
+      startOnBoot: true, // 設備重啟後自動啟動任務
     });
     console.log('後臺任務註冊成功');
   } catch (error) {
@@ -90,7 +90,7 @@ const Settings = () => {
   }, []);
 
   useEffect(() => {
-    // 监听通知接收事件
+    // 監聽通知接收事件
     // const subscription = Notifications.addNotificationReceivedListener(notification => {
     //   console.log('Notification received:', notification);
     // });
@@ -175,7 +175,8 @@ const Settings = () => {
         {/* 返回鍵 */}
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.navigate("Profile_settings")}
+          // onPress={() => navigation.navigate("Profile_settings")}
+          onPress={() => navigation.navigate("Mainpage")}
         >
           <Image
             style={styles.icon}
@@ -194,10 +195,11 @@ const Settings = () => {
             { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
             styles.button
           ]}
-          onPress={toggleNotification} // 點擊事件
+          // onPress={toggleNotification} // 點擊事件
         >
           <Text style={styles.textTypo}>
-            {isOn ? '通知：開啟' : '通知：關閉'} {/* 根據狀態顯示文本 */}
+            {/* 根據狀態顯示文本 */}
+            {isOn ? '通知：開啟' : '通知：關閉'}
           </Text>
         </Pressable>
         <Pressable

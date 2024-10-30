@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useState } from "react";
 import { Image, TextInput } from "react-native";
-import { StyleSheet, TouchableOpacity, View, Text,ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text,ScrollView , KeyboardAvoidingView, Platform,Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Calendar } from 'react-native-calendars';
 import { ref, set,get} from 'firebase/database';
-// import { db } from "../firebase";
 import { db } from "../FirebaseConfig";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
+import { useAuth } from "./AuthContext";
 
 // import { initializeApp } from 'firebase/app';
 // import { firebaseConfig } from '../firebase/firebaseConfig'; // Add your firebase config here
@@ -18,6 +18,7 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 const Add_expense = () => {
   const navigation = useNavigation();
+  const {user} = useAuth();
   const [selectedDate, setSelectedDate] = useState('');
   const [price, setPrice] = useState('');
   const [itemDescription, setItemDescription] = useState('');
@@ -27,7 +28,7 @@ const Add_expense = () => {
   };
   // 检查是否已经存在相同的 itemDescription，如果存在则加上编号
   const getUniqueItemDescription = async (itemDescription) => {
-    const expenseRef = ref(db, `expense/${selectedDate}/item`);
+    const expenseRef = ref(db, `uid/${user.uid}/expense/${selectedDate}/item`);
     const snapshot = await get(expenseRef);
     let uniqueDescription = itemDescription;
     let count = 1;
@@ -48,7 +49,7 @@ const Add_expense = () => {
 
   const handleSubmit = async() => {
     if (!selectedDate || !price || !itemDescription) {
-      alert('需填寫所有欄位!');
+      Alert.alert('通知','需填寫所有欄位!');
       return;
     }
     try {
@@ -56,7 +57,7 @@ const Add_expense = () => {
       const uniqueItemDescription = await getUniqueItemDescription(itemDescription);
 
       // 创建引用路径
-      const expenseRef = ref(db, `expense/${selectedDate}/item/${uniqueItemDescription}`);
+      const expenseRef = ref(db, `uid/${user.uid}/expense/${selectedDate}/item/${uniqueItemDescription}`);
 
       // 保存数据
       await set(expenseRef, {
@@ -92,7 +93,7 @@ const Add_expense = () => {
             </TouchableOpacity>
 
             {/* Diary_Cat 文字 */}
-            <Text style={styles.footerText}>Diary_Cat</Text>
+            <Text style={styles.footerText}>CatMinder</Text>
           </View>
 
           {/* 日曆 */}
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
   footerText: {
     color: Color.colorGray_500, 
     left: "50%",
+    width: 242,
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,
     color: Color.colorGray_500,

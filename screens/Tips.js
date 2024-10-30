@@ -1,129 +1,133 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import locationData from "../location.json";
 
 const Tips = () => {
   const navigation = useNavigation();
 
+  // 使用 useState 保存隨機生成的索引
+  const [randomIndex, setRandomIndex] = useState(null);
+
+  // 使用 useFocusEffect 在頁面每次聚焦時生成隨機索引
+  useFocusEffect(
+    React.useCallback(() => {
+      generateRandomIndex(); // 每次進入頁面時隨機生成一個索引
+    }, [])
+  );
+
+  // 定義一個函數來生成新的隨機數
+  const generateRandomIndex = () => {
+    const newRandomIndex = Math.floor(Math.random() * 100);
+    setRandomIndex(newRandomIndex); // 更新狀態
+  };
+
   return (
-    <View style={styles.view}>
-      <Image
-        style={styles.icon}
-        contentFit="cover"
-        source={require("../assets/14.png")}
-      />
-      <Image
-        style={styles.icon1}
-        contentFit="cover"
-        source={require("../assets/1.png")}
-      />
-      <Pressable
-        style={styles.icon}
-        onPress={() => navigation.navigate("Mainpage")}
+    <View style={styles.container}>
+      <View style={styles.headerRow}>
+        {/* 返回鍵 */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Mainpage")}
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/1.png")}
+          />
+        </TouchableOpacity>
+
+        {/* CatMinder 文字 */}
+        <Text style={styles.footerText}>CatMinder</Text>
+      </View>
+
+      <View style={styles.textLayout}>
+        <Text style={[styles.text]}>小知識</Text>
+        <View style={styles.textLayout1}>
+          {/* 確保 locationData 有效且 randomIndex 不是 null */}
+          {randomIndex !== null && (
+            <View style={styles.locationText}>
+            <Text style={styles.Text1}>
+              {locationData.locationList[randomIndex]}
+            </Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.submitButton}
+        onPress={generateRandomIndex}
       >
-        <Image
-          style={styles.icon2}
-          contentFit="cover"
-          source={require("../assets/0.png")}
-        />
-      </Pressable>
-      <Image
-        style={styles.icon1}
-        contentFit="cover"
-        source={require("../assets/1.png")}
-      />
-      <View style={styles.child} />
-      <View style={[styles.item, styles.itemLayout]} />
-      <View style={[styles.inner, styles.itemLayout]} />
-      <Text style={[styles.text, styles.textFlexBox]}>下一則</Text>
-      <Text style={[styles.text1, styles.textFlexBox]}>知道了!</Text>
-      <Text style={[styles.text2, styles.textFlexBox]}>Diary_Cat</Text>
+        <Text style={styles.submitButtonText}>知道了！看下一則</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  itemLayout: {
-    height: 52,
-    top: 717,
-    backgroundColor: Color.colorGainsboro_100,
-    borderRadius: Border.br_31xl,
+  container: {
+    flex: 1,
+    backgroundColor: Color.colorLightgoldenrodyellow,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  textLayout: {
+    height: 600,
+    width: 345,
     position: "absolute",
+    top: 110, 
+    left: 20, 
+    paddingTop: 25,
   },
-  textFlexBox: {
-    textAlign: "left",
-    position: "absolute",
+  locationText: {
+    borderRadius: 30,
+    backgroundColor: Color.colorGainsboro_200,
+    marginTop: 100,
+    textAlign: "center",
   },
-  icon: {
-    top: 38,
-    left: 23,
-    width: 78,
-    height: 71,
-    position: "absolute",
-  },
-  icon1: {
-    top: 49,
-    left: 38,
-    width: 48,
-    height: 48,
-    position: "absolute",
-    overflow: "hidden",
-  },
-  icon2: {
-    height: "100%",
-    width: "100%",
-  },
-  child: {
-    top: 189,
-    left: 25,
-    width: 341,
-    height: 465,
-    backgroundColor: Color.colorGainsboro_100,
-    borderRadius: Border.br_31xl,
-    position: "absolute",
-  },
-  item: {
-    left: 46,
-    width: 131,
-  },
-  inner: {
-    left: 224,
-    width: 134,
+  Text1: {
+    fontSize: 30,
+    textAlign: "center",
+    padding:10,
   },
   text: {
-    left: 243,
+    textAlign: "center",
     color: Color.colorBlack,
     fontFamily: FontFamily.interRegular,
     fontSize: FontSize.size_13xl,
-    top: 723,
-    textAlign: "left",
   },
-  text1: {
-    left: 59,
-    color: Color.colorBlack,
-    fontFamily: FontFamily.interRegular,
-    fontSize: FontSize.size_13xl,
-    top: 723,
-    textAlign: "left",
+  submitButton: {
+    backgroundColor: '#D3D3D3', // Light gray
+    borderRadius: 30,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 590,
   },
-  text2: {
-    marginTop: -378,
-    marginLeft: -60,
-    top: "50%",
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  backButton: {
+    width: 48,
+    height: 48,
+    marginRight: 10,
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
+  },
+  footerText: {
+    color: Color.colorGray_500,
     left: "50%",
+    width: 242,
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,
-    color: Color.colorGray_500,
-    width: 242,
-  },
-  view: {
-    backgroundColor: Color.colorLightgoldenrodyellow,
-    flex: 1,
-    height: 844,
-    overflow: "hidden",
-    width: "100%",
   },
 });
 
