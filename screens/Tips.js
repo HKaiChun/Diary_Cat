@@ -71,7 +71,8 @@ const Tips = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow,
+    // backgroundColor: Color.colorLightgoldenrodyellow,
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -85,7 +86,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     borderRadius: 30,
-    backgroundColor: Color.colorGainsboro_200,
+    // backgroundColor: Color.colorGainsboro_200,
+    backgroundColor: "#FFE6D9",
     marginTop: 100,
     textAlign: "center",
   },
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_13xl,
   },
   submitButton: {
-    backgroundColor: '#D3D3D3', // Light gray
+    backgroundColor: '#FFCBB3',
     borderRadius: 30,
     height: 50,
     justifyContent: "center",

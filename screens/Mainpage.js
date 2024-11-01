@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-
   },
   backButton: {
     width: 48,
@@ -260,8 +259,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
-    //backgroundColor: '#d2faf3',//測試
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: '#FFFAF4',
     paddingHorizontal: 20,
     paddingTop: 40,
   },

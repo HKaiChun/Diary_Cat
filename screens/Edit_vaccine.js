@@ -175,8 +175,8 @@ const Edit_vaccine = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
-    //backgroundColor: '#d2faf3',//測試
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: '#FFFAF4',
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -210,7 +210,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.colorBlack,
     borderStyle: "solid",
-    backgroundColor: Color.colorGainsboro_200,
+    // backgroundColor: Color.colorGainsboro_200,
+    backgroundColor: "#FFE6D9",
     borderRadius: Border.br_2xl,
     left: 14,
     top: 10,
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     marginTop: 590,  // 可以適當調整垂直間距
   },
   submitButton: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: '#FFCBB3',
     borderRadius: 30,
     height: 50,
     width: 140,  // 調整寬度來使它們適應在一行

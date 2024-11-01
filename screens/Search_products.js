@@ -90,7 +90,8 @@ const Search_products = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     color: Color.colorGray_500,
   },
   submitButton: {
-    backgroundColor: '#D3D3D3', // Light gray
+    backgroundColor: '#FFCBB3',
     borderRadius: 30,
     height: 50,
     justifyContent: "center",
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   },
   
   inputBox: {
-    backgroundColor: '#DCDCDC', // Gainsboro
+    backgroundColor: '#FFE6D9',
     borderRadius: 8,
     height: 50,
     marginBottom: 20,

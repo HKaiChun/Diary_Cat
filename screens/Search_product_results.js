@@ -195,7 +195,8 @@ const Search_product_results = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 10,
     paddingTop: 40,
   },
@@ -231,7 +232,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     marginBottom: 20,
-    backgroundColor: Color.colorGainsboro_200,
+    // backgroundColor: Color.colorGainsboro_200, // 產品顏色
+    backgroundColor: "#FFE6D9",
     borderRadius: Border.br_base,
     padding: 10,
   },
@@ -269,7 +271,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Color.colorLightgoldenrodyellow, // 與主背景相同
+    // backgroundColor: Color.colorLightgoldenrodyellow, // 與主背景相同
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 10,
     paddingTop: 5,
     marginTop: 10, // 確保 loading 在 header 下方

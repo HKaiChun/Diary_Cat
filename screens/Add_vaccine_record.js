@@ -148,8 +148,8 @@ const Add_vaccine_record = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
-    //backgroundColor: '#d2faf3',//測試
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: '#FFFAF4',
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     height: 735,
   },
   submitButton: {
-    backgroundColor: '#D3D3D3', // Light gray
+    backgroundColor: '#FFE6D9', // Light gray
     borderRadius: 30,
     height: 50,
     justifyContent: "center",

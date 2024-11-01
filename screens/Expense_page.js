@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     flex: 1,
-    backgroundColor: "#FFD700",
+    backgroundColor: "#FFCBB3",
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
   },
   addButton: {
-    backgroundColor: "#FFD700",
+    backgroundColor: "#FFCBB3",
     marginTop: 10,
     borderRadius: 8,
     paddingHorizontal: 20,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   expenseButton: {
     padding: 10,
     marginVertical: 5,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FFE6D9',
     borderRadius: 5,
   },
   expenseText: {
@@ -338,7 +338,8 @@ const styles = StyleSheet.create({
   },  
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow,
+    // backgroundColor: Color.colorLightgoldenrodyellow,
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },

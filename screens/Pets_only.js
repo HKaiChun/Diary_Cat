@@ -104,7 +104,8 @@ const Pets_only = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputBox: {
-    backgroundColor: '#DCDCDC', // Gainsboro
+    backgroundColor: '#FFE6D9', // Gainsboro
     borderRadius: 8,
     height: 50,
     marginBottom: 20,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   submitButton: {
-    backgroundColor: '#D3D3D3', // Light gray
+    backgroundColor: '#FFCBB3', // Light gray
     borderRadius: 100,
     height: 50,
     justifyContent: "center",

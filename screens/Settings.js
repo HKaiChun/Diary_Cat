@@ -192,7 +192,7 @@ const Settings = () => {
       <View style={styles.buttonContainer}>
         <Pressable
           style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
             styles.button
           ]}
           // onPress={toggleNotification} // 點擊事件
@@ -204,7 +204,7 @@ const Settings = () => {
         </Pressable>
         <Pressable
           style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
             styles.button]}
           onPress={() =>
             navigation.reset({
@@ -218,7 +218,7 @@ const Settings = () => {
 
         <Pressable
           style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#D0D0D0' },
+            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
             styles.button]}
           onPress={() => navigation.navigate("Forgot_password")}
         >

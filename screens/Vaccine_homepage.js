@@ -88,7 +88,8 @@ const Vaccine_homepage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -130,13 +131,15 @@ const styles = StyleSheet.create({
   vaccineItem: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: Color.colorOldlace,
+    // backgroundColor: Color.colorOldlace,
+    backgroundColor: "#FFE6D9",
     borderRadius: Border.br_12xl,
     borderWidth: 1,
     borderColor: Color.colorGainsboro_100,
   },
   vaccineview: {
-    backgroundColor: Color.colorLightgoldenrodyellow,
+    // backgroundColor: Color.colorLightgoldenrodyellow,
+    backgroundColor: "#FFFAF4",
     flex: 1,
     height: 844,
     overflow: "hidden",

@@ -163,7 +163,8 @@ const Edit_weight_page = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow,
+    // backgroundColor: Color.colorLightgoldenrodyellow,
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputBox: {
-    backgroundColor: '#DCDCDC',
+    backgroundColor: '#FFE6D9',
     borderRadius: 8,
     height: 50,
     marginBottom: 20,
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   submitButton: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: '#FFCBB3',
     borderRadius: 20,
     height: 50,
     justifyContent: "center",
