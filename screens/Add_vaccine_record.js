@@ -183,7 +183,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Color.colorBlack,
     borderStyle: "solid",
-    backgroundColor: Color.colorGainsboro_200,
+    // backgroundColor: Color.colorGainsboro_200,
+    backgroundColor: "#FFE6D9",
     borderRadius: Border.br_2xl,
     left: 14,
     top: 10,
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     height: 735,
   },
   submitButton: {
-    backgroundColor: '#FFE6D9', // Light gray
+    backgroundColor: '#FFCBB3',
     borderRadius: 30,
     height: 50,
     justifyContent: "center",
