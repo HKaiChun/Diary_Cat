@@ -190,22 +190,17 @@ const Settings = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Pressable
-          style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
-            styles.button
-          ]}
-          // onPress={toggleNotification} // 點擊事件
+        <TouchableOpacity
+          style={styles.button}
+        // onPress={toggleNotification} // 點擊事件
         >
           <Text style={styles.textTypo}>
             {/* 根據狀態顯示文本 */}
             {isOn ? '通知：開啟' : '通知：關閉'}
           </Text>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
-            styles.button]}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
           onPress={() =>
             navigation.reset({
               index: 0,
@@ -214,17 +209,15 @@ const Settings = () => {
           }
         >
           <Text style={styles.textTypo}>切換帳號</Text>
-        </Pressable>
+        </TouchableOpacity>
 
-        <Pressable
-          style={({ pressed }) => [
-            { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' },
-            styles.button]}
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => navigation.navigate("Forgot_password")}
         >
           <Text style={styles.textTypo}>更改密碼</Text>
           {/* <Text style={styles.textTypo}>{user.email}, {user.uid}</Text> */}
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -263,6 +256,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: "20%",
+    backgroundColor: "#FFCBB3",
   },
   view: {
     flex: 1,

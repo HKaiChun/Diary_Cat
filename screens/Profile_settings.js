@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View, TextInput } from "react-native";
+import { StyleSheet, Pressable, Text, View, TextInput, TouchableOpacity } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns"; // 用於格式化日期
 import { LinearGradient } from "expo-linear-gradient";
@@ -132,11 +132,10 @@ const Profile_settings = () => {
         locations={[0, 1]}
         colors={["#fef6db", "#fdfdfd"]}
       />
-      <Pressable
-        style={({ pressed }) => [
+      <TouchableOpacity
+        style={[
           styles.wrapper,
           styles.wrapperLayout,
-          { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' } // Change color when pressed
         ]}
         onPress={() => navigation.navigate("Settings")}
       >
@@ -146,12 +145,11 @@ const Profile_settings = () => {
           source={require("../assets/12.png")}
         />
         <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
           styles.rectangleIcon,
           styles.wrapperLayout,
-          { backgroundColor: pressed ? '#9D9D9D' : '#FFE6D9' } // Change color when pressed
         ]}>
         <Image
           style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
@@ -161,7 +159,7 @@ const Profile_settings = () => {
         <Text style={styles.textTypo1}>關於我們</Text>
 
         {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
-      </Pressable>
+      </TouchableOpacity>
 
       {/* Editable Fields */}
       {Object.keys(profile).map((key) => (
@@ -221,6 +219,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: "absolute",
+    backgroundColor: "#FFCBB3",
   },
   iconLayout: {
     height: "100%",
