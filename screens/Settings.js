@@ -170,7 +170,7 @@ const Settings = () => {
 
   return (
     <View style={styles.view}>
-      {/* 包含返回鍵和 Diary_Cat 的區塊 */}
+      {/* 包含返回鍵和 CatMinder 的區塊 */}
       <View style={styles.headerRow}>
         {/* 返回鍵 */}
         <TouchableOpacity
@@ -185,8 +185,8 @@ const Settings = () => {
           />
         </TouchableOpacity>
 
-        {/* Diary_Cat 文字 */}
-        <Text style={styles.footerText}>Diary_Cat</Text>
+        {/* CatMinder 文字 */}
+        <Text style={styles.footerText}>CatMinder</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -260,7 +260,8 @@ const styles = StyleSheet.create({
   },
   view: {
     flex: 1,
-    backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    // backgroundColor: Color.colorLightgoldenrodyellow, // Light goldenrod yellow
+    backgroundColor: "#FFFAF4",
     paddingHorizontal: 20,
     paddingTop: 40,
   },

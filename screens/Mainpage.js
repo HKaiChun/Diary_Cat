@@ -52,12 +52,12 @@ const MainpageContent = () => {
       locations={[0.52, 1]}
       colors={["#fffedf", '#E0E0E0']}
     >
-    <View style={styles.container}>
-      {/* 表頭區域 */}
-      <View style={styles.headerRow}>
+      <View style={styles.container}>
+        {/* 表頭區域 */}
+        <View style={styles.headerRow}>
 
-        {/* 原本的漢堡（頁面） */}
-        {/* <TouchableOpacity
+          {/* 原本的漢堡（頁面） */}
+          {/* <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.navigate("Profile_settings")}
           >
@@ -68,98 +68,103 @@ const MainpageContent = () => {
             />
           </TouchableOpacity> */}
 
-        {/* 新的漢堡 */}
-        <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.hamburgerButton}>
-          <Image source={require("../assets/align-justify.png")} style={styles.icon} />
-        </TouchableOpacity>
+          {/* 新的漢堡 */}
+          <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.hamburgerButton}>
+            <Image source={require("../assets/align-justify.png")} style={styles.icon} />
+          </TouchableOpacity>
 
 
-        {/* Diary_Cat 文字 */}
-        <Text style={styles.footerText}>CatMinder</Text>
+          {/* Centered Container for CatMinder */}
+          <View style={styles.headerCenterContainer}>
+            <Text style={styles.footerText}>CatMinder</Text>
+          </View>
+        </View>
+        <View>
+
+        </View>
+        {/* 按鍵區域 */}
+        <View style={styles.bu}>
+          {/* 飲水按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Water_intake_page")}
+          >
+            <Image
+              style={styles.butest2}
+              contentFit="cover"
+              source={require("../assets/fountain-2.png")}
+            />
+            <Text style={styles.butext1}>飲水</Text>
+          </TouchableOpacity>
+          {/* 支出按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Expense_page")}
+          >
+            <Image
+              style={styles.butest2}
+              contentFit="cover"
+              source={require("../assets/earn.png")}
+            />
+            <Text style={styles.butext1}>支出</Text>
+          </TouchableOpacity>
+          {/*體重按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Weight_homepage")}
+          >
+            <Image
+              style={[styles.butest2, styles.bigger]}
+              contentFit="cover"
+              source={require("../assets/weight-1.png")}
+            />
+            <Text style={styles.butext1}>體重</Text>
+          </TouchableOpacity>
+          {/* 疫苗按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Vaccine_homepage")}
+          >
+            <Image
+              style={styles.butest2}
+              contentFit="cover"
+              source={require("../assets/syringe-1.png")}
+            />
+            <Text style={styles.butext1}>疫苗接種</Text>
+          </TouchableOpacity>
+          {/* 小知識按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Tips")}
+          >
+            <Image
+              style={styles.butest2}
+              contentFit="cover"
+              source={require("../assets/book.png")}
+            />
+            <Text style={styles.butext1}>小知識</Text>
+          </TouchableOpacity>
+          {/* 找商品按鈕 */}
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.navigate("Search_products")}
+          >
+            <Image
+              style={styles.butest2}
+              contentFit="cover"
+              source={require("../assets/calendar-1.png")}
+            />
+            <Text style={styles.butext1}>找商品</Text>
+          </TouchableOpacity>
+          {/* 房子圖案 */}
+          <Image
+            style={styles.butest}
+            contentFit="cover"
+            source={require("../assets/animalshelter-1.png")}
+          />
+        </View>
+
       </View>
-      {/* 按鍵區域 */}
-      <View style={styles.bu}>
-        {/* 飲水按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Water_intake_page")}
-        >
-          <Image
-            style={styles.butest2}
-            contentFit="cover"
-            source={require("../assets/fountain-2.png")}
-          />
-          <Text style={styles.butext1}>飲水</Text>
-        </TouchableOpacity>
-        {/* 支出按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Expense_page")}
-        >
-          <Image
-            style={styles.butest2}
-            contentFit="cover"
-            source={require("../assets/earn.png")}
-          />
-          <Text style={styles.butext1}>支出</Text>
-        </TouchableOpacity>
-        {/*體重按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Weight_homepage")}
-        >
-          <Image
-            style={[styles.butest2, styles.bigger]}
-            contentFit="cover"
-            source={require("../assets/weight-1.png")}
-          />
-          <Text style={styles.butext1}>體重</Text>
-        </TouchableOpacity>
-        {/* 疫苗按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Vaccine_homepage")}
-        >
-          <Image
-            style={styles.butest2}
-            contentFit="cover"
-            source={require("../assets/syringe-1.png")}
-          />
-          <Text style={styles.butext1}>疫苗接種</Text>
-        </TouchableOpacity>
-        {/* 小知識按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Tips")}
-        >
-          <Image
-            style={styles.butest2}
-            contentFit="cover"
-            source={require("../assets/book.png")}
-          />
-          <Text style={styles.butext1}>小知識</Text>
-        </TouchableOpacity>
-        {/* 找商品按鈕 */}
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => navigation.navigate("Search_products")}
-        >
-          <Image
-            style={styles.butest2}
-            contentFit="cover"
-            source={require("../assets/calendar-1.png")}
-          />
-          <Text style={styles.butext1}>找商品</Text>
-        </TouchableOpacity>
-        {/* 房子圖案 */}
-        <Image
-          style={styles.butest}
-          contentFit="cover"
-          source={require("../assets/animalshelter-1.png")}
-        />
-      </View>
-
-    </View>
     </LinearGradient>
 
   );
@@ -249,9 +254,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  headerCenterContainer: {
+    flex: 1, // Takes up remaining space
+    alignItems: "center", // Centers content horizontally within the container
+  },
   footerText: {
-    color: Color.colorGray_500,
-    left: "50%",
+    // left: "50%",
     width: 242,
     fontSize: FontSize.size_21xl,
     fontFamily: FontFamily.kaushanScriptRegular,

@@ -9,10 +9,11 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import { useAuth } from "../screens/AuthContext";
 import { getDatabase, ref, get, set } from "firebase/database"; // Add Firebase database imports
+import { useDrawerStatus } from "@react-navigation/drawer";
 
 const Profile_settings = () => {
   const navigation = useNavigation();
-  // const drawerStatus = useDrawerStatus(); // Listen to drawer status
+  const drawerStatus = useDrawerStatus(); // Listen to drawer status
   const { user } = useAuth();
   const [profile, setProfile] = useState({
     age: "",
@@ -27,12 +28,29 @@ const Profile_settings = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // 控制日期選擇器顯示狀態
   // const [loading, setLoading] = useState(true); // 狀態變數，用於追蹤數據加載狀態
 
-  // Reset edit mode when drawer is closed
-  // useEffect(() => {
-  //   if (drawerStatus === "closed") {
-  //     setIsEditing(false);
-  //   }
-  // }, [drawerStatus]);
+  // Reset edit mode when drawer is closed, and get the lastest data
+  React.useEffect(() => {
+    if (drawerStatus === "closed") {
+      const db = getDatabase();
+      const uid = user.uid;
+      const profileRef = ref(db, `uid/${uid}/profile`);
+
+      // Fetch profile data from Firebase when the drawer opens
+      get(profileRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            setProfile(snapshot.val());
+          } else {
+            console.log("No data available");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      // reset edit mode
+      setIsEditing(false);
+    }
+  }, [drawerStatus, user]);
 
   // Mapping English keys to Chinese labels
   const keyTranslations = {
@@ -132,7 +150,33 @@ const Profile_settings = () => {
         locations={[0, 1]}
         colors={["#fef6db", "#fdfdfd"]}
       />
-      <TouchableOpacity
+      {/* Conditionally render "設定" and "關於我們" buttons */}
+      {!isEditing && (
+        <>
+          <TouchableOpacity
+            style={[styles.wrapper, styles.wrapperLayout]}
+            onPress={() => navigation.navigate("Settings")}
+          >
+            <Image
+              style={[styles.icon2, { position: "relative", top: 0, left: "-30%" }]}
+              contentFit="cover"
+              source={require("../assets/12.png")}
+            />
+            <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.rectangleIcon, styles.wrapperLayout]}>
+            <Image
+              style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
+              contentFit="cover"
+              source={require("../assets/union2.png")}
+            />
+            <Text style={styles.textTypo1}>關於我們</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+
+      {/* <TouchableOpacity
         style={[
           styles.wrapper,
           styles.wrapperLayout,
@@ -156,20 +200,35 @@ const Profile_settings = () => {
           contentFit="cover"
           source={require("../assets/union2.png")}
         />
-        <Text style={styles.textTypo1}>關於我們</Text>
+        <Text style={styles.textTypo1}>關於我們</Text> */}
 
-        {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
-      </TouchableOpacity>
+      {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
+      {/* </TouchableOpacity> */}
 
       {/* Editable Fields */}
       {Object.keys(profile).map((key) => (
         <View key={key} style={styles.fieldContainer}>
-          {isEditing ? (
+          {isEditing && key === "birthday" ? (
+            <>
+              <TouchableOpacity onPress={showDatePicker}>
+                <Text style={styles.textTypo}>{profile.birthday ? profile.birthday : `請選擇${keyTranslations[key]}`}</Text>
+              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                maximumDate={new Date()} // Set maximum date to today
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+            </>
+          ) : key === "age" ? (
+            <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile.age}`}</Text>
+          ) : isEditing ? (
             <TextInput
               style={styles.textTypo}
               value={profile[key]}
               onChangeText={(value) => handleChange(key, value)}
-              placeholder={`請輸入${keyTranslations[key]}`} // a hint
+              placeholder={`請輸入${keyTranslations[key]}`}
             />
           ) : (
             <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile[key]}`}</Text>
@@ -183,22 +242,56 @@ const Profile_settings = () => {
       <Text style={[styles.text5, styles.textTypo]}>年紀: {profile.age}</Text>
       <Text style={[styles.text6, styles.textTypo]}>生日: {profile.birthday}</Text>
       <Text style={[styles.text7, styles.textTypo]}>貓咪姓名: {profile.catName}</Text> */}
-      <Pressable
-        style={[styles.edit, styles.editPosition]}
+      <TouchableOpacity
+        style={[isEditing ? styles.editInSettingsPosition : styles.edit, styles.editPosition]}
         // onPress={() => navigation.navigate("Edit_profile_settings")}
         onPress={handleEditToggle}
       >
-        <Image
+        {/* <Image
           style={[styles.icon3, styles.iconLayout]}
           contentFit="cover"
           source={require("../assets/edit2.png")}
-        />
-      </Pressable>
+        /> */}
+        {isEditing ? (
+          // Render the "設定" button when in edit mode
+          <View style={styles.savingButton}>
+            <Text style={styles.savingButtonText}>儲存</Text>
+          </View>
+        ) : (
+          // Render the "edit2.png" image when not in edit mode
+          <Image
+            style={[styles.icon3, styles.iconLayout]}
+            contentFit="cover"
+            source={require("../assets/edit2.png")}
+          />
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  savingButton: {
+    backgroundColor: "#FFCBB3",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: Border.br_61xl,
+    width: 193,
+    height: 58,
+  },
+  savingButtonText: {
+    color: Color.colorBlack,
+    fontFamily: FontFamily.interBold,
+    fontSize: FontSize.size_xl,
+    fontWeight: "700",
+  },
+  editInSettingsPosition: {
+    top: 562, // Adjust this to match the position of "設定"
+    left: 54,
+    width: 44,
+    height: 38,
+    position: "absolute",
+  },
   fieldContainer: {
     marginVertical: 20,
   },

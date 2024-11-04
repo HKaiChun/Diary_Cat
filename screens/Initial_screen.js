@@ -32,7 +32,7 @@ const Initial_screen = () => {
       style={styles.pressable}
       onPress={() => navigation.navigate("Login")}
     >
-      <View style={[styles.view, styles.viewPosition]}>
+      <View style={/*[styles.view, styles.viewPosition]*/styles.container}>
         <Image
           style={[styles.icon, styles.viewPosition]}
           contentFit="cover"
@@ -63,8 +63,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: "100%",
   },
+  container: {
+    flex: 1,
+    backgroundColor: Color.colorWhite,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   textTypo: {
-    textAlign: "left",
+    textAlign: "center",
     color: Color.colorWhite,
     fontFamily: FontFamily.katibehRegular,
     position: "absolute",
@@ -74,19 +80,19 @@ const styles = StyleSheet.create({
   },
   s6266884PreviewRev11Icon: {
     top: 195,
-    left: 43,
+    // left: 43,
     width: 300,
     height: 214,
     position: "absolute",
   },
   welcome: {
     top: 409,
-    left: 35,
+    // left: 35,
     fontSize: 96,
   },
   text: {
     top: 636,
-    alignSelf: 'center',
+    // alignSelf: 'center',
     fontSize: FontSize.size_5xl,
   },
   view: {
