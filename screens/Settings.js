@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Image } from "expo-image";
 import { StyleSheet, TouchableOpacity, Pressable, Text, View, Alert, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { useAuth } from "../screens/AuthContext";
 
@@ -87,6 +88,7 @@ const Settings = () => {
     };
 
     requestPermissions();
+    registerBackgroundTask();
   }, []);
 
   useEffect(() => {
@@ -96,60 +98,79 @@ const Settings = () => {
     // });
 
     // return () => subscription.remove();
-    registerBackgroundTask();
-  }, []);
-
-  // 切換按鈕狀態
-  const toggleNotification = () => {
-    const newState = !isOn;
-    setIsOn(newState);
-
-    // 當切換到開啟狀態時，每10秒發送一次推送通知
-    if (newState) {
-      sendNotification(); // 立即觸發一次通知
-
-      const intervalId = setInterval(() => {
-        sendNotification();
-      }, 10000); // 每10秒觸發一次
-      setNotificationInterval(intervalId); // 保存定時器ID
-
-      if (Platform.OS === 'ios' || Platform.OS === 'android') {
-        // 判斷是否為設備
-        console.log("turn on notification");
-      }
-    } else {
-      // 當通知狀態切換到關閉時，清除定時器
-      if (notificationInterval) {
-        clearInterval(notificationInterval);
-        setNotificationInterval(null);
-
-        // 取消所有已安排的推送通知
-        Notifications.cancelAllScheduledNotificationsAsync().then(() => {
-          console.log("所有計畫的推送通知已取消");
-        });
-
-        if (Platform.OS === 'ios' || Platform.OS === 'android') {
-          // 判斷是否為設備
-          console.log("turn off notification");
+    const loadNotificationState = async () => {
+      try {
+        const storedState = await AsyncStorage.getItem(user.email);
+        if (storedState !== null) {
+          setIsOn(storedState === "通知：開啟");
         }
+      } catch (error) {
+        console.error('Failed to load notification state:', error);
       }
-    }
-  };
+    };
+
+    loadNotificationState();
+  }, [user.email]);
+
+  // test the notification status in storage
+  // const testFuction = async () => {
+  //   const userEmail = await AsyncStorage.getItem(user.email);
+  //   const keys = await AsyncStorage.getAllKeys();
+  //   console.log(`this is now ${userEmail}, and the key is ${keys}`)
+  //   if (keys.includes(`${user.email}`)) {
+  //     const userEKey = await AsyncStorage.getItem(user.email);
+  //     console.log(`this key is ${user.email}, and value is ${userEKey}`);
+  //   }
+  // }
+
+  // 切換按鈕狀態並存儲在 AsyncStorage 中
+  // const toggleNotification = async () => {
+  //   const newState = !isOn;
+  //   setIsOn(newState);
+  //   const newStatus = newState ? "通知：開啟" : "通知：關閉";
+  //   try {
+  //     await AsyncStorage.setItem(user.email, newStatus);
+  //     console.log(`Notification status for ${user.email} is now ${newStatus}`);
+  //   } catch (error) {
+  //     console.error('Failed to save notification status:', error);
+  //   }
+
+  //   if (newState) {
+  //     // Schedule repeated notifications only if notifications are enabled
+  //     sendNotification(newState); // Send an immediate notification
+  //     const intervalId = setInterval(() => {
+  //       sendNotification(newState);
+  //     }, 10000); // Send every 10 seconds
+  //     setNotificationInterval(intervalId); // Save interval ID
+  //   } else {
+  //     // Clear scheduled notifications when turned off
+  //     if (notificationInterval) {
+  //       clearInterval(notificationInterval);
+  //       setNotificationInterval(null);
+  //     }
+  //     // Cancel all scheduled notifications
+  //     await Notifications.cancelAllScheduledNotificationsAsync();
+  //     console.log("All scheduled notifications canceled.");
+  //   }
+  // };
 
   // 發送推送通知的函數
-  const sendNotification = async () => {
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "通知",
-          body: "這是每10秒的推送通知",
-        },
-        trigger: null, // 立即觸發
-      });
-    } catch (error) {
-      console.error('通知發送失敗', error);
-    }
-  };
+  // const sendNotification = async (newState) => {
+  //   console.log(`${newState}`);
+  //   if (!newState) return; // Only proceed if notifications are on
+  //   console.log(`here is test for ${newState} which may return true or false`)
+  //   try {
+  //     await Notifications.scheduleNotificationAsync({
+  //       content: {
+  //         title: "通知",
+  //         body: "這是每10秒的推送通知",
+  //       },
+  //       trigger: null, // 立即觸發
+  //     });
+  //   } catch (error) {
+  //     console.error('通知發送失敗', error);
+  //   }
+  // };
 
   // 當使用者沒有透過登入介面登入時，不會讓他進入其他介面（因為沒有登入）
   // React.useEffect(() => {
@@ -172,6 +193,7 @@ const Settings = () => {
     <View style={styles.view}>
       {/* 包含返回鍵和 CatMinder 的區塊 */}
       <View style={styles.headerRow}>
+
         {/* 返回鍵 */}
         <TouchableOpacity
           style={styles.backButton}
@@ -189,16 +211,24 @@ const Settings = () => {
         <Text style={styles.footerText}>CatMinder</Text>
       </View>
 
+      {/* test button */}
+      {/* <TouchableOpacity
+          onPress={(testFuction)}
+        >
+          <Text style={{top:1}}>test</Text>
+        </TouchableOpacity> */}
+
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+
+        {/* <TouchableOpacity
           style={styles.button}
-        // onPress={toggleNotification} // 點擊事件
+          onPress={toggleNotification} // 點擊事件
         >
           <Text style={styles.textTypo}>
-            {/* 根據狀態顯示文本 */}
+            
             {isOn ? '通知：開啟' : '通知：關閉'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
