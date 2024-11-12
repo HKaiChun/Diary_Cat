@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Pressable, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns"; // 用於格式化日期
 import { LinearGradient } from "expo-linear-gradient";
@@ -128,9 +128,10 @@ const Profile_settings = () => {
   };
 
   return (
-    <View style={styles.view}>
-      <View style={styles.child} />
-      {/* <Image
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.view}>
+        <View style={styles.child} />
+        {/* <Image
         style={styles.icon}
         contentFit="cover"
         source={require("../assets/5.png")}
@@ -145,128 +146,98 @@ const Profile_settings = () => {
         contentFit="cover"
         source={require("../assets/camera.png")}
       /> */}
-      <LinearGradient
-        style={[styles.inner, styles.editPosition]}
-        locations={[0, 1]}
-        colors={["#fef6db", "#fdfdfd"]}
-      />
-      {/* Conditionally render "設定" and "關於我們" buttons */}
-      {!isEditing && (
-        <>
-          <TouchableOpacity
-            style={[styles.wrapper, styles.wrapperLayout]}
-            onPress={() => navigation.navigate("Settings")}
-          >
-            <Image
-              style={[styles.icon2, { position: "relative", top: 0, left: "-30%" }]}
-              contentFit="cover"
-              source={require("../assets/12.png")}
-            />
-            <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.rectangleIcon, styles.wrapperLayout]}>
+        <LinearGradient
+          style={[styles.inner, styles.editPosition]}
+          locations={[0, 1]}
+          colors={["#fef6db", "#fdfdfd"]}
+        />
+        {/* Conditionally render "設定" and "關於我們" buttons */}
+        {!isEditing && (
+          <>
+            <TouchableOpacity
+              style={[styles.wrapper, styles.wrapperLayout]}
+              onPress={() => navigation.navigate("Settings")}
+            >
+              <Image
+                style={[styles.icon2, { position: "relative", top: 0, left: "-30%" }]}
+                contentFit="cover"
+                source={require("../assets/12.png")}
+              />
+              <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity style={[styles.rectangleIcon, styles.wrapperLayout]}>
             <Image
               style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
               contentFit="cover"
               source={require("../assets/union2.png")}
             />
             <Text style={styles.textTypo1}>關於我們</Text>
-          </TouchableOpacity>
-        </>
-      )}
-
-
-      {/* <TouchableOpacity
-        style={[
-          styles.wrapper,
-          styles.wrapperLayout,
-        ]}
-        onPress={() => navigation.navigate("Settings")}
-      >
-        <Image
-          style={[styles.icon2, { position: "relative", top: 0, left: "-30%" }]}
-          contentFit="cover"
-          source={require("../assets/12.png")}
-        />
-        <Text style={[styles.text8, styles.textTypo1]}>設定</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.rectangleIcon,
-          styles.wrapperLayout,
-        ]}>
-        <Image
-          style={[styles.unionIcon, { position: "relative", top: 0, left: "-30%" }]}
-          contentFit="cover"
-          source={require("../assets/union2.png")}
-        />
-        <Text style={styles.textTypo1}>關於我們</Text> */}
-
-      {/* <Text style={styles.textTypo1}>{user.email}, {user.uid}</Text> */}
-      {/* </TouchableOpacity> */}
-
-      {/* Editable Fields */}
-      {Object.keys(profile).map((key) => (
-        <View key={key} style={styles.fieldContainer}>
-          {isEditing && key === "birthday" ? (
-            <>
-              <TouchableOpacity onPress={showDatePicker}>
-                <Text style={styles.textTypo}>{profile.birthday ? profile.birthday : `請選擇${keyTranslations[key]}`}</Text>
-              </TouchableOpacity>
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                maximumDate={new Date()} // Set maximum date to today
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
+          </TouchableOpacity> */}
+          </>
+        )}
+        {/* Editable Fields */}
+        {Object.keys(profile).map((key) => (
+          <View key={key} style={styles.fieldContainer}>
+            {isEditing && key === "birthday" ? (
+              <>
+                <TouchableOpacity onPress={showDatePicker}>
+                  <Text style={styles.textTypo}>{profile.birthday ? profile.birthday : `請選擇${keyTranslations[key]}`}</Text>
+                </TouchableOpacity>
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  maximumDate={new Date()} // Set maximum date to today
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
+              </>
+            ) : key === "age" ? (
+              <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile.age}`}</Text>
+            ) : isEditing ? (
+              <TextInput
+                style={styles.textTypo}
+                value={profile[key]}
+                onChangeText={(value) => handleChange(key, value)}
+                placeholder={`請輸入${keyTranslations[key]}`}
               />
-            </>
-          ) : key === "age" ? (
-            <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile.age}`}</Text>
-          ) : isEditing ? (
-            <TextInput
-              style={styles.textTypo}
-              value={profile[key]}
-              onChangeText={(value) => handleChange(key, value)}
-              placeholder={`請輸入${keyTranslations[key]}`}
-            />
-          ) : (
-            <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile[key]}`}</Text>
-          )}
-        </View>
-      ))}
-      {/* <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
+            ) : (
+              <Text style={styles.textTypo}>{`${keyTranslations[key]}: ${profile[key]}`}</Text>
+            )}
+          </View>
+        ))}
+        {/* <Text style={[styles.text, styles.textTypo1]}>顏色: {profile.color}</Text>
       <Text style={[styles.text1, styles.textTypo]}>是否結紮: {profile.neuteredStatus}</Text>
       <Text style={[styles.text3, styles.textTypo]}>性別: {profile.gender}</Text>
       <Text style={[styles.text4, styles.textTypo]}>品種: {profile.breed}</Text>
       <Text style={[styles.text5, styles.textTypo]}>年紀: {profile.age}</Text>
       <Text style={[styles.text6, styles.textTypo]}>生日: {profile.birthday}</Text>
       <Text style={[styles.text7, styles.textTypo]}>貓咪姓名: {profile.catName}</Text> */}
-      <TouchableOpacity
-        style={[isEditing ? styles.editInSettingsPosition : styles.edit, styles.editPosition]}
-        // onPress={() => navigation.navigate("Edit_profile_settings")}
-        onPress={handleEditToggle}
-      >
-        {/* <Image
+        <TouchableOpacity
+          style={[isEditing ? styles.editInSettingsPosition : styles.edit, styles.editPosition]}
+          // onPress={() => navigation.navigate("Edit_profile_settings")}
+          onPress={handleEditToggle}
+        >
+          {/* <Image
           style={[styles.icon3, styles.iconLayout]}
           contentFit="cover"
           source={require("../assets/edit2.png")}
         /> */}
-        {isEditing ? (
-          // Render the "設定" button when in edit mode
-          <View style={styles.savingButton}>
-            <Text style={styles.savingButtonText}>儲存</Text>
-          </View>
-        ) : (
-          // Render the "edit2.png" image when not in edit mode
-          <Image
-            style={[styles.icon3, styles.iconLayout]}
-            contentFit="cover"
-            source={require("../assets/edit2.png")}
-          />
-        )}
-      </TouchableOpacity>
-    </View>
+          {isEditing ? (
+            // Render the "設定" button when in edit mode
+            <View style={styles.savingButton}>
+              <Text style={styles.savingButtonText}>儲存</Text>
+            </View>
+          ) : (
+            // Render the "edit2.png" image when not in edit mode
+            <Image
+              style={[styles.icon3, styles.iconLayout]}
+              contentFit="cover"
+              source={require("../assets/edit2.png")}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

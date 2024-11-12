@@ -96,7 +96,7 @@ const MainpageContent = () => {
             />
             <Text style={styles.butext1}>飲水</Text>
           </TouchableOpacity>
-          {/* 支出按鈕 */}
+          {/* 記帳按鈕 */}
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={() => navigation.navigate("Expense_page")}
@@ -106,7 +106,7 @@ const MainpageContent = () => {
               contentFit="cover"
               source={require("../assets/earn.png")}
             />
-            <Text style={styles.butext1}>支出</Text>
+            <Text style={styles.butext1}>記帳</Text>
           </TouchableOpacity>
           {/*體重按鈕 */}
           <TouchableOpacity
@@ -144,7 +144,7 @@ const MainpageContent = () => {
             />
             <Text style={styles.butext1}>小知識</Text>
           </TouchableOpacity>
-          {/* 找商品按鈕 */}
+          {/* 商品比價按鈕 */}
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={() => navigation.navigate("Search_products")}
@@ -154,7 +154,7 @@ const MainpageContent = () => {
               contentFit="cover"
               source={require("../assets/calendar-1.png")}
             />
-            <Text style={styles.butext1}>找商品</Text>
+            <Text style={styles.butext1}>商品比價</Text>
           </TouchableOpacity>
           {/* 房子圖案 */}
           <Image

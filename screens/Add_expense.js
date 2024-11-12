@@ -9,13 +9,6 @@ import { db } from "../FirebaseConfig";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useAuth } from "./AuthContext";
 
-// import { initializeApp } from 'firebase/app';
-// import { firebaseConfig } from '../firebase/firebaseConfig'; // Add your firebase config here
-
-// Initialize Firebase
-// initializeApp(firebaseConfig);
-// const database = getDatabase();
-
 const Add_expense = () => {
   const navigation = useNavigation();
   const {user} = useAuth();
